@@ -1,8 +1,9 @@
-package org.example.main;
+package com.mdcc.dto2ts.main;
 
+import com.mdcc.dto2ts.extensions.*;
 import cz.habarta.typescript.generator.*;
 
-import java.util.Collections;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package org.example.main;
+package com.mdcc.dto2ts.extensions;
 
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
