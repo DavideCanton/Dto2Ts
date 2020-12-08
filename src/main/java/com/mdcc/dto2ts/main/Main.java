@@ -1,24 +1,38 @@
 package com.mdcc.dto2ts.main;
 
-import com.google.common.base.CaseFormat;
-import com.mdcc.dto2ts.extensions.ClassNameDecoratorExtension;
-import cyclops.control.Try;
+import com.google.common.base.*;
+import com.mdcc.dto2ts.extensions.*;
+import cyclops.control.*;
+import cyclops.data.tuple.*;
 import cz.habarta.typescript.generator.*;
+import org.jetbrains.annotations.*;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.function.*;
+import java.util.regex.*;
+import java.util.stream.*;
 
 public class Main {
     public static void main(String[] args) {
+        Try.success(args)
+                .mapOrCatch(a -> Tuple2.of(buildInput(a[0]), buildGenerator()))
+                .mapOrCatch(t -> t._2().generateTypeScript(t._1()))
+                .flatMapOrCatch(Main::splitTypeScriptClasses)
+                .onFail(t -> System.err.println("Got exception: " + t.toString()))
+        ;
+    }
 
+    @NotNull
+    private static Input buildInput(String pattern) {
         Input.Parameters params = new Input.Parameters();
-        params.classNamePatterns = Collections.singletonList(args[0]);
-        Input input = Input.from(params);
+        params.classNamePatterns = Collections.singletonList(pattern);
+        return Input.from(params);
+    }
 
+    @NotNull
+    private static TypeScriptGenerator buildGenerator() {
         Settings settings = new Settings();
         settings.jsonLibrary = JsonLibrary.jackson2;
         settings.outputKind = TypeScriptOutputKind.module;
@@ -30,33 +44,46 @@ public class Main {
         settings.noTslintDisable = true;
         settings.extensions.add(new ClassNameDecoratorExtension());
 
-        TypeScriptGenerator typeScriptGenerator = new TypeScriptGenerator(settings);
-        String s = typeScriptGenerator.generateTypeScript(input);
-        System.out.println(s);
-        splitTypeScriptClasses(s);
+        return new TypeScriptGenerator(settings);
     }
 
-    private static void splitTypeScriptClasses(String typeScriptClasses) {
+    private static Try<Void, Throwable> splitTypeScriptClasses(String typeScriptClasses) {
         Pattern p = Pattern.compile("export class (\\w+)", Pattern.MULTILINE);
-        Arrays.stream(typeScriptClasses.trim().split("}"))
-                .forEach(classCode -> {
-                    Matcher m = p.matcher(classCode);
-                    if (m.find()) {
-                        String className = m.group(1);
-                        createTypeScriptFile(classCode.trim() + "\n}", className);
-                    }
-                });
+        return streamReduce(
+                Arrays.stream(typeScriptClasses.trim().split("}"))
+                        .map(p::matcher)
+                        .filter(Matcher::find),
+                Try.success(null),
+                (first, current) -> combineLazy(
+                        first,
+                        () -> {
+                            String code = current.group(0);
+                            String className = current.group(1);
+                            return Try.success(className)
+                                    .map(fn -> CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, fn))
+                                    .map(fileNameKebabCase -> String.format("./target/%s.model.ts", fileNameKebabCase))
+                                    .flatMapOrCatch(fn -> createTypeScriptFile(code.trim() + "\n}", fn));
+                        },
+                        (a, b) -> a
+                ));
     }
 
-    private static void createTypeScriptFile(String code, String fileName) {
-
-        Try.<String, Exception>withCatch(() -> CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, fileName))
-                .mapOrCatch(fileNameKebabCase -> new FileWriter("./target/" + fileNameKebabCase + ".model.ts"), Exception.class)
-                .mapOrCatch(PrintWriter::new, Exception.class)
-                .peek(printWriter -> printWriter.print(code))
-                .peek(PrintWriter::close)
-                .onFail(t -> System.out.println("Errore creazione file" + fileName));
+    private static Try<Void, Throwable> createTypeScriptFile(String code, String fileName) {
+        return Try.withResources(
+                () -> new PrintWriter(new FileWriter(fileName)),
+                pw -> {
+                    pw.print(code);
+                    return null;
+                },
+                IOException.class
+        );
     }
 
+    private static <T, U> U streamReduce(Stream<T> stream, U identity, BiFunction<U, T, U> combiner) {
+        return stream.reduce(identity, combiner, (a, b) -> a);
+    }
 
+    private static <T, X extends Throwable> Try<T, X> combineLazy(Try<T, X> t1, Supplier<Try<T, X>> t2, BinaryOperator<T> func) {
+        return t1.flatMapOrCatch(v -> t2.get().mapOrCatch(v2 -> func.apply(v, v2)));
+    }
 }
