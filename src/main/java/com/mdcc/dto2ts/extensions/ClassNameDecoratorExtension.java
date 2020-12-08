@@ -1,14 +1,23 @@
 package com.mdcc.dto2ts.extensions;
 
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
+import cz.habarta.typescript.generator.Extension;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.compiler.ModelCompiler;
 import cz.habarta.typescript.generator.emitter.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClassNameDecoratorExtension extends Extension {
+
+    public static final String JSON_PROPERTY = "JsonProperty";
+    public static final String JSON_FLAG = "JsonFlag";
+    public static final String JSON_DATE_ISO = "JsonDateISO";
+    public static final String JSON_COMPLEX_PROPERTY = "JsonComplexProperty";
+    public static final String JSON_ARRAY_OF_COMPLEX_TYPE = "JsonArrayOfComplexType";
+    public static final String JSON_ARRAY = "JsonArray";
 
     @Override
     public EmitterExtensionFeatures getFeatures() {
@@ -54,15 +63,22 @@ public class ClassNameDecoratorExtension extends Extension {
         if (property.tsType instanceof TsType.BasicArrayType) {
             TsType element = ((TsType.BasicArrayType) property.tsType).elementType;
             return buildArrayDecorator(property, element);
-        } else
+        } else if (property.tsType instanceof TsType.BasicType)
             return buildSimpleDecorator(property);
+        else
+            return buildComplexDecorator(property, property.tsType);
     }
 
     private TsDecorator buildArrayDecorator(TsPropertyModel property, TsType element) {
         String[] split = element.toString().split("\\$");
 
+        if (((TsType.BasicArrayType) property.tsType).elementType instanceof TsType.BasicType) {
+            return new TsDecorator(
+                    new TsIdentifierReference(JSON_ARRAY),
+                    Collections.emptyList());
+        }
         return new TsDecorator(
-                new TsIdentifierReference("JsonArrayOfComplexType"),
+                new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_TYPE),
                 Collections.singletonList(
                         new TsIdentifierReference(split[split.length - 1])
                 )
@@ -70,9 +86,32 @@ public class ClassNameDecoratorExtension extends Extension {
     }
 
     private TsDecorator buildSimpleDecorator(TsPropertyModel property) {
+
+        String tsIdentifierReference = null;
+        switch (((TsType.BasicType) property.tsType).name) {
+            case "string":
+            case "number":
+                tsIdentifierReference = JSON_PROPERTY;
+                break;
+            case "boolean":
+                tsIdentifierReference = JSON_FLAG;
+                break;
+            case "Date":
+                tsIdentifierReference = JSON_DATE_ISO;
+                break;
+        }
         return new TsDecorator(
-                new TsIdentifierReference("JsonProperty"),
+                new TsIdentifierReference(tsIdentifierReference),
                 Collections.emptyList()
+        );
+    }
+
+    private TsDecorator buildComplexDecorator(TsPropertyModel property, TsType element) {
+        String[] split = element.toString().split("\\$");
+
+        return new TsDecorator(
+                new TsIdentifierReference(JSON_COMPLEX_PROPERTY),
+                Collections.singletonList(new TsIdentifierReference(split[split.length - 1]))
         );
     }
 
