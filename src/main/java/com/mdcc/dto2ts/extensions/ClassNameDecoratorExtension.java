@@ -1,23 +1,23 @@
 package com.mdcc.dto2ts.extensions;
 
-import cz.habarta.typescript.generator.Extension;
-import cz.habarta.typescript.generator.TsType;
-import cz.habarta.typescript.generator.compiler.ModelCompiler;
+import com.mdcc.dto2ts.imports.*;
+import com.mdcc.dto2ts.utils.*;
+import cz.habarta.typescript.generator.*;
+import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
+
+import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 public class ClassNameDecoratorExtension extends Extension {
+    private final ImportHandler importHandler = new ImportHandler();
 
-    public static final String JSON_PROPERTY = "JsonProperty";
-    public static final String JSON_FLAG = "JsonFlag";
-    public static final String JSON_DATE_ISO = "JsonDateISO";
-    public static final String JSON_COMPLEX_PROPERTY = "JsonComplexProperty";
-    public static final String JSON_ARRAY_OF_COMPLEX_TYPE = "JsonArrayOfComplexType";
-    public static final String JSON_ARRAY = "JsonArray";
+    public ImportHandler getImportHandler() {
+        return importHandler;
+    }
 
     @Override
     public EmitterExtensionFeatures getFeatures() {
@@ -41,21 +41,37 @@ public class ClassNameDecoratorExtension extends Extension {
         if (!bean.isClass())
             return bean;
 
+        String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
+        importHandler.registerClassLibraryImport(className, JSON_CLASS);
+
         return bean
                 .withDecorators(Collections.singletonList(new TsDecorator(
-                        new TsIdentifierReference("JsonClass"),
+                        new TsIdentifierReference(JSON_CLASS),
                         Collections.emptyList()
                 )))
                 .withProperties(bean.getProperties().stream()
-                        .map(ClassNameDecoratorExtension.this::decorateProperty)
+                        .map(property -> ClassNameDecoratorExtension.this.decorateProperty(property, className))
                         .collect(Collectors.toList())
                 );
     }
 
-    private TsPropertyModel decorateProperty(TsPropertyModel property) {
+    private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName) {
         List<TsDecorator> decorators = Collections.singletonList(buildPropertyDecorator(property));
+        decorators.forEach(decorator -> putImport(decorator, simpleName));
         return property
                 .withDecorators(decorators);
+    }
+
+    private void putImport(TsDecorator decorator, String simpleName) {
+        String decoratorName = decorator.getIdentifierReference().getIdentifier();
+        importHandler.registerClassLibraryImport(simpleName, decoratorName);
+
+        decorator.getArguments()
+                .stream()
+                .findFirst()
+                .filter(a -> a instanceof TsIdentifierReference)
+                .map(a -> ((TsIdentifierReference) a).getIdentifier())
+                .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 
     @NotNull
@@ -78,7 +94,7 @@ public class ClassNameDecoratorExtension extends Extension {
                     Collections.emptyList());
         }
         return new TsDecorator(
-                new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_TYPE),
+                new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_PROPERTY),
                 Collections.singletonList(
                         new TsIdentifierReference(split[split.length - 1])
                 )
@@ -107,11 +123,11 @@ public class ClassNameDecoratorExtension extends Extension {
     }
 
     private TsDecorator buildComplexDecorator(TsPropertyModel property, TsType element) {
-        String[] split = element.toString().split("\\$");
+        String name = Utils.getClassNameFromTsQualifiedName(element.toString());
 
         return new TsDecorator(
                 new TsIdentifierReference(JSON_COMPLEX_PROPERTY),
-                Collections.singletonList(new TsIdentifierReference(split[split.length - 1]))
+                Collections.singletonList(new TsIdentifierReference(name))
         );
     }
 
