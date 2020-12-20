@@ -5,10 +5,10 @@ import cyclops.control.*;
 public class Main {
     public static void main(String[] args) {
         Try.success(args)
-            .mapOrCatch(Main::parseArgs)
-            .mapOrCatch(Dto2TsGenerator::new)
+            .mapOrCatch(Main::parseArgs, Throwable.class)
+            .mapOrCatch(Dto2TsGenerator::new, Throwable.class)
             .flatMapOrCatch(g ->
-                g.generate().flatMapOrCatch(g::splitTypeScriptClasses)
+                g.generate().flatMapOrCatch(g::splitTypeScriptClasses), Throwable.class
             )
             .onFail(t -> System.err.println("Got exception: " + t.toString()))
             .peek(__ -> System.out.println("Finished!"))
@@ -18,7 +18,10 @@ public class Main {
     private static Arguments parseArgs(String[] strings) {
         return new Arguments()
             .withPattern(strings[0])
-            .withOutputFolder(strings.length > 1 ? strings[1] : "./target")
-            ;
+            .withVisitableName("Pippo")
+            .withVisitablePath("./pippo")
+            .withVisitorName("IVisitor")
+            .withVisitorPath("./pippo")
+            .withOutputFolder(strings.length > 1 ? strings[1] : "./target");
     }
 }

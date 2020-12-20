@@ -24,6 +24,13 @@ public class ImportHandler {
         set.add(symbol);
     }
 
+    public void registerExternalImport(String className, String symbol, String pathArgument) {
+        Map<String, Set<String>> classImports = ensureClassImportsExists(className);
+        Set<String> set = ensureSymbolImportExists(classImports, pathArgument);
+        set.add(symbol);
+    }
+
+
     public ReactiveSeq<Tuple2<String, List<String>>> getImportsFor(String className) {
         return ReactiveSeq.fromStream(this.imports.getOrDefault(className, new HashMap<>())
             .entrySet()

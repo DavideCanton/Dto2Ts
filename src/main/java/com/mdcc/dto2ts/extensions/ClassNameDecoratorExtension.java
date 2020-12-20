@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.extensions;
 
 import com.mdcc.dto2ts.imports.*;
+import com.mdcc.dto2ts.main.*;
 import com.mdcc.dto2ts.utils.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
@@ -14,6 +15,12 @@ import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 public class ClassNameDecoratorExtension extends Extension {
     private final ImportHandler importHandler = new ImportHandler();
+    private Arguments args;
+
+
+    public ClassNameDecoratorExtension(Arguments args) {
+        this.args = args;
+    }
 
     public ImportHandler getImportHandler() {
         return importHandler;
@@ -29,11 +36,11 @@ public class ClassNameDecoratorExtension extends Extension {
     @Override
     public List<TransformerDefinition> getTransformers() {
         return Collections.singletonList(
-                new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
-                        model.withBeans(model.getBeans().stream()
-                                .map(ClassNameDecoratorExtension.this::decorateClass)
-                                .collect(Collectors.toList())
-                        ))
+            new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
+                model.withBeans(model.getBeans().stream()
+                    .map(ClassNameDecoratorExtension.this::decorateClass)
+                    .collect(Collectors.toList())
+                ))
         );
     }
 
@@ -43,23 +50,67 @@ public class ClassNameDecoratorExtension extends Extension {
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
         importHandler.registerClassLibraryImport(className, JSON_CLASS);
+        importHandler.registerClassLibraryImport(className, SERIALIZE_FN);
+        importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
+        importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
+        bean.getImplementsList().add(new TsType.BasicType(args.getVisitableName()));
 
         return bean
-                .withDecorators(Collections.singletonList(new TsDecorator(
-                        new TsIdentifierReference(JSON_CLASS),
-                        Collections.emptyList()
-                )))
-                .withProperties(bean.getProperties().stream()
-                        .map(property -> ClassNameDecoratorExtension.this.decorateProperty(property, className))
-                        .collect(Collectors.toList())
-                );
+            .withDecorators(Collections.singletonList(new TsDecorator(
+                new TsIdentifierReference(JSON_CLASS),
+                Collections.emptyList()
+            )))
+            .withProperties(Stream.concat(bean.getProperties().stream()
+                    .map(property -> decorateProperty(property, className))
+                    .map(this::transformPropertyType),
+                Stream.of(buildSerializeProperty()))
+                .collect(Collectors.toList())
+            )
+            .withMethods(Collections.singletonList(new TsMethodModel(
+                "accept",
+                TsModifierFlags.None,
+                Collections.emptyList(),
+                Collections.singletonList(new TsParameterModel("visitor", new TsType.BasicType(args.getVisitorName()))),
+                TsType.Void,
+                Collections.singletonList(
+                    new TsExpressionStatement(
+                        new TsCallExpression(
+                            new TsMemberExpression(new TsIdentifierReference("visitor"), "visit" + className),
+                            new TsThisExpression()
+                        )
+                    )
+                ),
+                null
+            )));
+    }
+
+    private TsPropertyModel transformPropertyType(TsPropertyModel property) {
+        return property
+            .getDecorators()
+            .stream()
+            .map(TsDecorator::getIdentifierReference)
+            .map(TsIdentifierReference::getIdentifier)
+            .filter(identifier -> identifier.equals(JSON_DATE_ISO) || identifier.equals(JSON_COMPLEX_PROPERTY))
+            .findFirst()
+            .map(__ -> property.withTsType(new TsType.NullableType(property.tsType)))
+            .orElse(property);
+    }
+
+
+    private TsPropertyModel buildSerializeProperty() {
+        return new TsPropertyModel("serialize",
+            new TsType.BasicType(SERIALIZE_FN),
+            TsModifierFlags.None,
+            true,
+            null);
+
     }
 
     private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName) {
         List<TsDecorator> decorators = Collections.singletonList(buildPropertyDecorator(property));
         decorators.forEach(decorator -> putImport(decorator, simpleName));
         return property
-                .withDecorators(decorators);
+            .withDecorators(decorators);
     }
 
     private void putImport(TsDecorator decorator, String simpleName) {
@@ -67,11 +118,11 @@ public class ClassNameDecoratorExtension extends Extension {
         importHandler.registerClassLibraryImport(simpleName, decoratorName);
 
         decorator.getArguments()
-                .stream()
-                .findFirst()
-                .filter(a -> a instanceof TsIdentifierReference)
-                .map(a -> ((TsIdentifierReference) a).getIdentifier())
-                .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
+            .stream()
+            .findFirst()
+            .filter(a -> a instanceof TsIdentifierReference)
+            .map(a -> ((TsIdentifierReference) a).getIdentifier())
+            .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 
     @NotNull
@@ -79,25 +130,29 @@ public class ClassNameDecoratorExtension extends Extension {
         if (property.tsType instanceof TsType.BasicArrayType) {
             TsType element = ((TsType.BasicArrayType) property.tsType).elementType;
             return buildArrayDecorator(property, element);
-        } else if (property.tsType instanceof TsType.BasicType)
+        } else if (isBasicType(property.tsType))
             return buildSimpleDecorator(property);
         else
-            return buildComplexDecorator(property, property.tsType);
+            return buildComplexDecorator(property.tsType);
+    }
+
+    private boolean isBasicType(TsType tsType) {
+        return tsType instanceof TsType.BasicType;
     }
 
     private TsDecorator buildArrayDecorator(TsPropertyModel property, TsType element) {
         String[] split = element.toString().split("\\$");
 
-        if (((TsType.BasicArrayType) property.tsType).elementType instanceof TsType.BasicType) {
+        if (isBasicType(((TsType.BasicArrayType) property.tsType).elementType)) {
             return new TsDecorator(
-                    new TsIdentifierReference(JSON_ARRAY),
-                    Collections.emptyList());
+                new TsIdentifierReference(JSON_ARRAY),
+                Collections.emptyList());
         }
         return new TsDecorator(
-                new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_PROPERTY),
-                Collections.singletonList(
-                        new TsIdentifierReference(split[split.length - 1])
-                )
+            new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_PROPERTY),
+            Collections.singletonList(
+                new TsIdentifierReference(split[split.length - 1])
+            )
         );
     }
 
@@ -115,19 +170,21 @@ public class ClassNameDecoratorExtension extends Extension {
             case "Date":
                 tsIdentifierReference = JSON_DATE_ISO;
                 break;
+            default:
+                break;
         }
         return new TsDecorator(
-                new TsIdentifierReference(tsIdentifierReference),
-                Collections.emptyList()
+            new TsIdentifierReference(tsIdentifierReference),
+            Collections.emptyList()
         );
     }
 
-    private TsDecorator buildComplexDecorator(TsPropertyModel property, TsType element) {
+    private TsDecorator buildComplexDecorator(TsType element) {
         String name = Utils.getClassNameFromTsQualifiedName(element.toString());
 
         return new TsDecorator(
-                new TsIdentifierReference(JSON_COMPLEX_PROPERTY),
-                Collections.singletonList(new TsIdentifierReference(name))
+            new TsIdentifierReference(JSON_COMPLEX_PROPERTY),
+            Collections.singletonList(new TsIdentifierReference(name))
         );
     }
 

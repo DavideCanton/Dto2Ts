@@ -19,7 +19,7 @@ public class Dto2TsGenerator {
     private final String outputFolder;
 
     public Dto2TsGenerator(Arguments args) {
-        this.extension = new ClassNameDecoratorExtension();
+        this.extension = new ClassNameDecoratorExtension(args);
         this.input = buildInput(args.getPattern());
         this.generator = buildGenerator(extension);
         this.outputFolder = args.getOutputFolder();
@@ -32,7 +32,9 @@ public class Dto2TsGenerator {
     public Try<Void, Throwable> splitTypeScriptClasses(String typeScriptClasses) {
         Pattern p = Pattern.compile("export class (\\w+)", Pattern.MULTILINE);
 
-        return ReactiveSeq.fromStream(Arrays.stream(typeScriptClasses.trim().split("}")))
+        return ReactiveSeq.fromStream(Arrays.stream(typeScriptClasses.trim().split("@JsonClass")))
+            .map(s -> s.replace("[];", "[] = [];"))
+            .map(s -> "@JsonClass" + s)
             .map(s -> Tuple2.of(s, p.matcher(s)))
             .filter(t -> t._2().find())
             .onEmptyError(() -> new Exception("Code not found"))
@@ -40,7 +42,8 @@ public class Dto2TsGenerator {
                 Try.success(null),
                 (first, current) ->
                     first.flatMapOrCatch(__ ->
-                        createTypeScriptFile(current._1().trim() + "\n}", current._2().group(1))
+                            createTypeScriptFile(current._1().trim(), current._2().group(1)),
+                        Throwable.class
                     )
             );
     }
