@@ -1,25 +1,36 @@
 package com.mdcc.dto2ts.extensions;
 
+import com.mdcc.dto2ts.domains.*;
 import com.mdcc.dto2ts.imports.*;
 import com.mdcc.dto2ts.main.*;
 import com.mdcc.dto2ts.utils.*;
+import cyclops.control.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
+import lombok.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
+@Getter
 public class ClassNameDecoratorExtension extends Extension {
     private final ImportHandler importHandler = new ImportHandler();
-    private Arguments args;
-
+    private final DomainHandler domainHandler;
+    private final Arguments args;
 
     public ClassNameDecoratorExtension(Arguments args) {
         this.args = args;
+        this.domainHandler = new DomainHandler(args.getThreshold());
+    }
+
+    public Try<Void, Throwable> init() {
+        return this.domainHandler.loadPropertiesFrom(args.getDomainFile())
+            .mapFailure(Function.identity());
     }
 
     public ImportHandler getImportHandler() {
@@ -102,15 +113,43 @@ public class ClassNameDecoratorExtension extends Extension {
             new TsType.BasicType(SERIALIZE_FN),
             TsModifierFlags.None,
             true,
-            null);
-
+            null
+        );
     }
 
     private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName) {
+        if (property.tsType.equals(TsType.String) &&
+            property.name.startsWith(args.getDomainPrefix())) {
+
+            val domain = domainHandler.isDomain(property.name.substring(args.getDomainPrefix().length()));
+
+            if (domain.isPresent()) {
+                importHandler.registerClassLibraryImport(simpleName, JSON_LOCALIZABLE_PROPERTY);
+                importHandler.registerClassLibraryImport(simpleName, I_LOCALIZABLE_PROPERTY);
+                domainHandler.registerUsedDomain(domain.get());
+                return buildDomainProperty(property);
+            }
+        }
+
         List<TsDecorator> decorators = Collections.singletonList(buildPropertyDecorator(property));
         decorators.forEach(decorator -> putImport(decorator, simpleName));
         return property
             .withDecorators(decorators);
+    }
+
+    private TsPropertyModel buildDomainProperty(TsPropertyModel property) {
+        return new TsPropertyModel(
+            property.name,
+            new TsType.NullableType(new TsType.GenericBasicType(I_LOCALIZABLE_PROPERTY, TsType.String)),
+            TsModifierFlags.None,
+            true,
+            null
+        ).withDecorators(
+            Collections.singletonList(new TsDecorator(
+                new TsIdentifierReference(JSON_LOCALIZABLE_PROPERTY),
+                Collections.emptyList()
+            ))
+        );
     }
 
     private void putImport(TsDecorator decorator, String simpleName) {
@@ -159,7 +198,8 @@ public class ClassNameDecoratorExtension extends Extension {
     private TsDecorator buildSimpleDecorator(TsPropertyModel property) {
 
         String tsIdentifierReference = null;
-        switch (((TsType.BasicType) property.tsType).name) {
+        String type = ((TsType.BasicType) property.tsType).name;
+        switch (type) {
             case "string":
             case "number":
                 tsIdentifierReference = JSON_PROPERTY;

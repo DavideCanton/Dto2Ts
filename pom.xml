@@ -34,7 +34,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.example.main.Main</mainClass>
+                                    <mainClass>com.mdcc.dto2ts.main.Main</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <Class-Path>.</Class-Path>

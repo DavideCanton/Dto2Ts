@@ -17,6 +17,12 @@ public class Arguments {
     private String visitorName;
     @Parameter(names = {"--visitor-path"})
     private String visitorPath;
-    @Parameter(names = "--help", help = true)
+    @Parameter(names = {"-h", "--help"}, help = true)
     private boolean help;
+    @Parameter(names = {"--domain-file", "-d"})
+    private String domainFile;
+    @Parameter(names = {"--domain-prefix"})
+    private String domainPrefix = "cod";
+    @Parameter(names = {"-t", "--threshold"})
+    private double threshold = 0.8;
 }

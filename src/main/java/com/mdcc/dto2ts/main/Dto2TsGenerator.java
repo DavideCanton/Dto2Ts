@@ -6,27 +6,32 @@ import cyclops.control.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
+import lombok.*;
 import org.jetbrains.annotations.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+@Getter
 public class Dto2TsGenerator {
     private final Input input;
     private final ClassNameDecoratorExtension extension;
     private final TypeScriptGenerator generator;
     private final String outputFolder;
+    private final Arguments arguments;
 
     public Dto2TsGenerator(Arguments args) {
         this.extension = new ClassNameDecoratorExtension(args);
         this.input = buildInput(args.getPattern());
         this.generator = buildGenerator(extension);
         this.outputFolder = args.getOutputFolder();
+        this.arguments = args;
     }
 
     public Try<String, Throwable> generate() {
-        return Try.withCatch(() -> this.generator.generateTypeScript(this.input), Throwable.class);
+        return this.extension.init()
+            .mapOrCatch(__ -> this.generator.generateTypeScript(this.input), Throwable.class);
     }
 
     public Try<Void, Throwable> splitTypeScriptClasses(String typeScriptClasses) {

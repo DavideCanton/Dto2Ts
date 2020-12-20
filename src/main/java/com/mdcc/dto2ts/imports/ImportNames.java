@@ -11,6 +11,8 @@ public class ImportNames {
     public static final String JSON_ARRAY_OF_COMPLEX_PROPERTY = "JsonArrayOfComplexProperty";
     public static final String JSON_ARRAY = "JsonArray";
     public static final String SERIALIZE_FN = "SerializeFn";
+    public static final String JSON_LOCALIZABLE_PROPERTY = "JsonLocalizableProperty";
+    public static final String I_LOCALIZABLE_PROPERTY = "ILocalizableProperty";
 
     private static final Map<String, String> libraryImports = new HashMap<>();
 
@@ -19,7 +21,7 @@ public class ImportNames {
             libraryImports.put(s, "at-json");
         }
 
-        for (String s : Arrays.asList(JSON_FLAG, JSON_DATE_ISO)) {
+        for (String s : Arrays.asList(JSON_FLAG, JSON_DATE_ISO, JSON_LOCALIZABLE_PROPERTY, I_LOCALIZABLE_PROPERTY)) {
             libraryImports.put(s, "creapp-common-lib");
         }
     }
