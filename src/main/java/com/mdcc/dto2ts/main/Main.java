@@ -1,5 +1,6 @@
 package com.mdcc.dto2ts.main;
 
+import com.beust.jcommander.*;
 import cyclops.control.*;
 
 public class Main {
@@ -10,18 +11,17 @@ public class Main {
             .flatMapOrCatch(g ->
                 g.generate().flatMapOrCatch(g::splitTypeScriptClasses), Throwable.class
             )
-            .onFail(t -> System.err.println("Got exception: " + t.toString()))
+            .onFail(Throwable::printStackTrace)
             .peek(__ -> System.out.println("Finished!"))
         ;
     }
 
     private static Arguments parseArgs(String[] strings) {
-        return new Arguments()
-            .withPattern(strings[0])
-            .withVisitableName("Pippo")
-            .withVisitablePath("./pippo")
-            .withVisitorName("IVisitor")
-            .withVisitorPath("./pippo")
-            .withOutputFolder(strings.length > 1 ? strings[1] : "./target");
+        Arguments args = new Arguments();
+        JCommander.newBuilder()
+            .addObject(args)
+            .build()
+            .parse(strings);
+        return args;
     }
 }
