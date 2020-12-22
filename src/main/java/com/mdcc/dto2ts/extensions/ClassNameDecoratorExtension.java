@@ -124,7 +124,9 @@ public class ClassNameDecoratorExtension extends Extension
             }
         }
 
-        List<TsDecorator> decorators = Collections.singletonList(buildPropertyDecorator(property));
+        List<TsDecorator> decorators = new ArrayList<>();
+        buildPropertyDecorator(property).ifPresent(decorators::add);
+
         decorators.forEach(decorator -> putImport(decorator, simpleName));
         return property
             .withDecorators(decorators);
@@ -143,18 +145,17 @@ public class ClassNameDecoratorExtension extends Extension
             .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 
-    @NotNull
-    private TsDecorator buildPropertyDecorator(TsPropertyModel property)
+    private Optional<TsDecorator> buildPropertyDecorator(TsPropertyModel property)
     {
         if (property.tsType instanceof TsType.BasicArrayType)
         {
             TsType element = ((TsType.BasicArrayType) property.tsType).elementType;
-            return buildArrayDecorator(property, element);
+            return Optional.of(buildArrayDecorator(property, element));
         }
         else if (isBasicType(property.tsType))
             return buildSimpleDecorator(property);
         else
-            return buildComplexDecorator(property.tsType);
+            return Optional.of(buildComplexDecorator(property.tsType));
     }
 
     private boolean isBasicType(TsType tsType)
@@ -179,31 +180,34 @@ public class ClassNameDecoratorExtension extends Extension
             );
     }
 
-    private TsDecorator buildSimpleDecorator(TsPropertyModel property)
+    private Optional<TsDecorator> buildSimpleDecorator(TsPropertyModel property)
     {
-        String tsIdentifierReference = null;
-        String type = ((TsType.BasicType) property.tsType).name;
+        return Optional.of(((TsType.BasicType) property.tsType).name)
+            .flatMap(type ->
+            {
+                String ret = null;
+                switch (type)
+                {
+                    case "string":
+                    case "number":
+                        ret = JSON_PROPERTY;
+                        break;
+                    case "boolean":
+                        ret = JSON_FLAG;
+                        break;
+                    case "Date":
+                        ret = JSON_DATE_ISO;
+                        break;
+                    default:
+                        break;
 
-        switch (type)
-        {
-            case "string":
-            case "number":
-                tsIdentifierReference = JSON_PROPERTY;
-                break;
-            case "boolean":
-                tsIdentifierReference = JSON_FLAG;
-                break;
-            case "Date":
-                tsIdentifierReference = JSON_DATE_ISO;
-                break;
-            default:
-                break;
-        }
-
-        return new TsDecorator(
-            new TsIdentifierReference(tsIdentifierReference),
-            Collections.emptyList()
-        );
+                }
+                return Optional.ofNullable(ret);
+            })
+            .map(tsIdentifierReference -> new TsDecorator(
+                new TsIdentifierReference(tsIdentifierReference),
+                Collections.emptyList()
+            ));
     }
 
     private TsDecorator buildComplexDecorator(TsType element)

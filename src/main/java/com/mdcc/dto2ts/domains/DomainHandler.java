@@ -3,6 +3,7 @@ package com.mdcc.dto2ts.domains;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
 import info.debatty.java.stringsimilarity.*;
+import info.debatty.java.stringsimilarity.interfaces.*;
 import lombok.*;
 
 import java.io.*;
@@ -12,7 +13,7 @@ import java.util.stream.*;
 @Getter
 public class DomainHandler {
     private List<String> domains = new ArrayList<>();
-    private final NormalizedLevenshtein algorithm = new NormalizedLevenshtein();
+    private final StringSimilarity algorithm = new NormalizedLevenshtein();
     private double threshold;
     private Set<String> domainsUsed = new TreeSet<>();
 
