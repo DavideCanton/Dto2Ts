@@ -10,6 +10,7 @@ import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
 import lombok.*;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -32,7 +33,12 @@ public class ClassNameDecoratorExtension extends Extension
 
     public Try<Void, Throwable> init()
     {
-        return this.domainHandler.loadPropertiesFrom(args.getDomainFile())
+        return Try.withResources(
+            () -> new FileReader(args.getDomainFile()),
+            this.domainHandler::loadPropertiesFrom,
+            IOException.class
+        )
+            .flatMap(t -> t)
             .mapFailure(Function.identity());
     }
 

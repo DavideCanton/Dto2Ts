@@ -21,18 +21,16 @@ public class DomainHandler {
         this.threshold = threshold;
     }
 
-    public Try<Void, IOException> loadPropertiesFrom(String path) {
-        return Try.withResources(
-            () -> new FileReader(path),
-            r -> {
+    public Try<Void, IOException> loadPropertiesFrom(Reader reader) {
+        return Try.runWithCatch(
+            () -> {
                 val p = new Properties();
-                p.load(r);
+                p.load(reader);
                 domains = p
                     .keySet()
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.toList());
-                return null;
             },
             IOException.class
         );
