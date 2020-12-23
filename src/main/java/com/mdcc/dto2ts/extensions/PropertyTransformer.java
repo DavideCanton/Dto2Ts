@@ -37,7 +37,7 @@ public class PropertyTransformer
         return Objects.equals(Utils.getClassNameFromTsQualifiedName(tsType.toString()), "UUID");
     }
 
-    public TsPropertyModel buildDomainProperty(TsPropertyModel property)
+    public TsPropertyModel buildDomainProperty(TsPropertyModel property, String domain)
     {
         return new TsPropertyModel(
             property.name,
@@ -48,7 +48,12 @@ public class PropertyTransformer
         ).withDecorators(
             Collections.singletonList(new TsDecorator(
                 new TsIdentifierReference(JSON_LOCALIZABLE_PROPERTY),
-                Collections.emptyList()
+                Collections.singletonList(
+                    new TsMemberExpression(
+                        new TsIdentifierReference(DOMAINS),
+                        domain
+                    )
+                )
             ))
         );
     }

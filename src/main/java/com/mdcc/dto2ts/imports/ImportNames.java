@@ -13,6 +13,7 @@ public class ImportNames {
     public static final String SERIALIZE_FN = "SerializeFn";
     public static final String JSON_LOCALIZABLE_PROPERTY = "JsonLocalizableProperty";
     public static final String I_LOCALIZABLE_PROPERTY = "ILocalizableProperty";
+    public static final String DOMAINS = "Domains";
 
     private static final Map<String, String> libraryImports = new HashMap<>();
 
@@ -21,7 +22,7 @@ public class ImportNames {
             libraryImports.put(s, "at-json");
         }
 
-        for (String s : Arrays.asList(JSON_FLAG, JSON_DATE_ISO, JSON_LOCALIZABLE_PROPERTY, I_LOCALIZABLE_PROPERTY)) {
+        for (String s : Arrays.asList(JSON_FLAG, JSON_DATE_ISO, JSON_LOCALIZABLE_PROPERTY, I_LOCALIZABLE_PROPERTY, DOMAINS)) {
             libraryImports.put(s, "creapp-common-lib");
         }
     }

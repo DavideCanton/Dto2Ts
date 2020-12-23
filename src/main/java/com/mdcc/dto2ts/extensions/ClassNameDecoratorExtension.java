@@ -9,7 +9,6 @@ import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
 import lombok.*;
-import org.jetbrains.annotations.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -72,7 +71,7 @@ public class ClassNameDecoratorExtension extends Extension
         importHandler.registerClassLibraryImport(className, SERIALIZE_FN);
         importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
         importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
-        bean.getImplementsList().add(new TsType.BasicType(args.getVisitableName()));
+        bean.getImplementsList().add(new TsType.GenericBasicType(args.getVisitableName(), new TsType.BasicType(args.getVisitorName())));
 
         return bean
             .withDecorators(Collections.singletonList(new TsDecorator(
@@ -113,14 +112,15 @@ public class ClassNameDecoratorExtension extends Extension
         if (property.tsType.equals(TsType.String) &&
             property.name.startsWith(args.getDomainPrefix()))
         {
-            val domain = domainHandler.isDomain(property.name.substring(args.getDomainPrefix().length()));
+            val domain = domainHandler.findDomain(property.name.substring(args.getDomainPrefix().length()));
 
             if (domain.isPresent())
             {
                 importHandler.registerClassLibraryImport(simpleName, JSON_LOCALIZABLE_PROPERTY);
                 importHandler.registerClassLibraryImport(simpleName, I_LOCALIZABLE_PROPERTY);
+                importHandler.registerClassLibraryImport(simpleName, DOMAINS);
                 domainHandler.registerUsedDomain(domain.get());
-                return propertyTransformer.buildDomainProperty(property);
+                return propertyTransformer.buildDomainProperty(property, domain.get());
             }
         }
 

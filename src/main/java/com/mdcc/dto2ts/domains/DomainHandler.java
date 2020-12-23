@@ -38,7 +38,7 @@ public class DomainHandler {
         );
     }
 
-    public Optional<String> isDomain(String propertyName) {
+    public Optional<String> findDomain(String propertyName) {
         Comparator<Tuple2<String, Double>> c = Comparator.comparingDouble(Tuple2::_2);
         String lowercaseProperty = propertyName.toLowerCase(Locale.ROOT);
 
