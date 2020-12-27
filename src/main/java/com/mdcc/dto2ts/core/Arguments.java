@@ -1,9 +1,11 @@
-package com.mdcc.dto2ts.main;
+package com.mdcc.dto2ts.core;
 
 import com.beust.jcommander.*;
 import lombok.*;
+import org.springframework.stereotype.*;
 
 @Data
+@Component
 public class Arguments {
     @Parameter(required = true, names = {"-p", "--pattern"})
     private String pattern;

@@ -1,14 +1,16 @@
 package com.mdcc.dto2ts.extensions;
 
+import com.mdcc.dto2ts.core.*;
 import com.mdcc.dto2ts.domains.*;
 import com.mdcc.dto2ts.imports.*;
-import com.mdcc.dto2ts.main.*;
 import com.mdcc.dto2ts.utils.*;
 import cyclops.control.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 import java.io.*;
 import java.util.*;
@@ -18,17 +20,16 @@ import java.util.stream.*;
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 @Getter
+@Service
 public class ClassNameDecoratorExtension extends Extension {
-    private final ImportHandler importHandler = new ImportHandler();
-    private final DomainHandler domainHandler;
-    private final Arguments args;
-    private final PropertyTransformer propertyTransformer;
-
-    public ClassNameDecoratorExtension(Arguments args) {
-        this.args = args;
-        this.domainHandler = new DomainHandler(args.getThreshold());
-        this.propertyTransformer = new PropertyTransformer(args);
-    }
+    @Autowired
+    private ImportHandler importHandler;
+    @Autowired
+    private DomainHandler domainHandler;
+    @Autowired
+    private Arguments args;
+    @Autowired
+    private PropertyTransformer propertyTransformer;
 
     public Try<Void, Throwable> init() {
         return Try.withResources(

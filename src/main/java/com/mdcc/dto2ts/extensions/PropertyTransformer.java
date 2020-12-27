@@ -1,19 +1,19 @@
 package com.mdcc.dto2ts.extensions;
 
-import com.mdcc.dto2ts.main.*;
+import com.mdcc.dto2ts.core.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.emitter.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 import java.util.*;
 
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
+@Service
 public class PropertyTransformer {
-    private final Arguments args;
-
-    public PropertyTransformer(Arguments args) {
-        this.args = args;
-    }
+    @Autowired
+    private Arguments args;
 
     public TsPropertyModel buildFlagProperty(TsPropertyModel property) {
         return property.withTsType(TsType.Boolean);
@@ -23,8 +23,7 @@ public class PropertyTransformer {
         return property.withTsType(TsType.String);
     }
 
-    public TsPropertyModel buildSerializeProperty()
-    {
+    public TsPropertyModel buildSerializeProperty() {
         return new TsPropertyModel(
             "serialize",
             new TsType.BasicType(SERIALIZE_FN),
@@ -38,8 +37,7 @@ public class PropertyTransformer {
         return propertyModel.name.startsWith(args.getUidPrefix());
     }
 
-    public TsPropertyModel buildDomainProperty(TsPropertyModel property, String domain)
-    {
+    public TsPropertyModel buildDomainProperty(TsPropertyModel property, String domain) {
         return new TsPropertyModel(
             property.name,
             new TsType.NullableType(new TsType.GenericBasicType(I_LOCALIZABLE_PROPERTY, TsType.String)),
@@ -59,8 +57,7 @@ public class PropertyTransformer {
         );
     }
 
-    public TsPropertyModel transformPropertyTypeBeforeDecorate(TsPropertyModel property)
-    {
+    public TsPropertyModel transformPropertyTypeBeforeDecorate(TsPropertyModel property) {
         if (isUUID(property))
             property = buildUUIDProperty(property);
         else if (property.getName().startsWith("flg"))
@@ -69,8 +66,7 @@ public class PropertyTransformer {
         return property;
     }
 
-    public TsPropertyModel transformPropertyTypeAfterDecorate(TsPropertyModel property)
-    {
+    public TsPropertyModel transformPropertyTypeAfterDecorate(TsPropertyModel property) {
         return property
             .getDecorators()
             .stream()
