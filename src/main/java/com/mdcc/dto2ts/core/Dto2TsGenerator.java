@@ -1,4 +1,4 @@
-package com.mdcc.dto2ts.main;
+package com.mdcc.dto2ts.core;
 
 import com.mdcc.dto2ts.extensions.*;
 import com.mdcc.dto2ts.utils.*;
@@ -8,25 +8,28 @@ import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import lombok.*;
 import org.jetbrains.annotations.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
 @Getter
+@Service
 public class Dto2TsGenerator {
-    private final Input input;
-    private final ClassNameDecoratorExtension extension;
-    private final TypeScriptGenerator generator;
-    private final String outputFolder;
-    private final Arguments arguments;
+    private Input input;
+    private TypeScriptGenerator generator;
+    private String outputFolder;
+    @Autowired
+    private Arguments arguments;
+    @Autowired
+    private ClassNameDecoratorExtension extension;
 
-    public Dto2TsGenerator(Arguments args) {
-        this.extension = new ClassNameDecoratorExtension(args);
-        this.input = buildInput(args.getPattern());
+    public void init() {
+        this.input = buildInput(arguments.getPattern());
         this.generator = buildGenerator(extension);
-        this.outputFolder = args.getOutputFolder();
-        this.arguments = args;
+        this.outputFolder = arguments.getOutputFolder();
     }
 
     public Try<String, Throwable> generate() {

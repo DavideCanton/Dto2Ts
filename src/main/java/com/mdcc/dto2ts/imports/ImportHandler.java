@@ -3,10 +3,12 @@ package com.mdcc.dto2ts.imports;
 import com.mdcc.dto2ts.utils.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
+import org.springframework.stereotype.*;
 
 import java.util.*;
 import java.util.function.*;
 
+@Service
 public class ImportHandler {
     private final Map<String, Map<String, Set<String>>> imports = new TreeMap<>();
 

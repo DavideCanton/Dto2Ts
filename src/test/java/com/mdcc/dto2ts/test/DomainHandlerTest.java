@@ -1,26 +1,37 @@
 package com.mdcc.dto2ts.test;
 
+import com.mdcc.dto2ts.core.*;
 import com.mdcc.dto2ts.domains.*;
 import lombok.*;
 import org.junit.*;
+import org.junit.runner.*;
+import org.mockito.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.test.context.*;
+import org.springframework.boot.test.mock.mockito.*;
+import org.springframework.test.context.junit4.*;
 
 import java.io.*;
 
 import static org.junit.Assert.*;
 
-public class DomainHandlerTest
-{
+@SuppressWarnings("OptionalGetWithoutIsPresent")
+@SpringBootTest
+@RunWith(SpringRunner.class)
+public class DomainHandlerTest {
+    @Autowired
     private DomainHandler domainHandler;
 
+    @MockBean
+    private Arguments arguments;
+
     @Before
-    public void setup()
-    {
-        this.domainHandler = new DomainHandler(0.7);
+    public void setup() {
+        Mockito.when(arguments.getThreshold()).thenReturn(0.7);
     }
 
     @Test
-    public void testRegisterUsedDomains()
-    {
+    public void testRegisterUsedDomains() {
         this.domainHandler.registerUsedDomain("Domain1");
         this.domainHandler.registerUsedDomain("Domain2");
         this.domainHandler.registerUsedDomain("Domain1");
@@ -33,8 +44,7 @@ public class DomainHandlerTest
     }
 
     @Test
-    public void testFindDomains()
-    {
+    public void testFindDomains() {
         val s = "miotipo=aaa\nmiodominio=bbb";
         val reader = new StringReader(s);
         assertTrue(this.domainHandler.loadPropertiesFrom(reader).isSuccess());
