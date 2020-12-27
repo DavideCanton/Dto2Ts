@@ -1,6 +1,6 @@
 package com.mdcc.dto2ts.extensions;
 
-import com.mdcc.dto2ts.utils.*;
+import com.mdcc.dto2ts.main.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.emitter.*;
 
@@ -8,16 +8,18 @@ import java.util.*;
 
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
-public class PropertyTransformer
-{
+public class PropertyTransformer {
+    private final Arguments args;
 
-    public TsPropertyModel buildFlagProperty(TsPropertyModel property)
-    {
+    public PropertyTransformer(Arguments args) {
+        this.args = args;
+    }
+
+    public TsPropertyModel buildFlagProperty(TsPropertyModel property) {
         return property.withTsType(TsType.Boolean);
     }
 
-    public TsPropertyModel buildUUIDProperty(TsPropertyModel property)
-    {
+    public TsPropertyModel buildUUIDProperty(TsPropertyModel property) {
         return property.withTsType(TsType.String);
     }
 
@@ -32,9 +34,8 @@ public class PropertyTransformer
         );
     }
 
-    private boolean isUUID(TsType tsType)
-    {
-        return Objects.equals(Utils.getClassNameFromTsQualifiedName(tsType.toString()), "UUID");
+    private boolean isUUID(TsPropertyModel propertyModel) {
+        return propertyModel.name.startsWith(args.getUidPrefix());
     }
 
     public TsPropertyModel buildDomainProperty(TsPropertyModel property, String domain)
@@ -60,7 +61,7 @@ public class PropertyTransformer
 
     public TsPropertyModel transformPropertyTypeBeforeDecorate(TsPropertyModel property)
     {
-        if (isUUID(property.tsType))
+        if (isUUID(property))
             property = buildUUIDProperty(property);
         else if (property.getName().startsWith("flg"))
             property = buildFlagProperty(property);

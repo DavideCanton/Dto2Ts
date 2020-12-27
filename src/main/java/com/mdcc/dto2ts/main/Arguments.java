@@ -23,6 +23,8 @@ public class Arguments {
     private String domainFile;
     @Parameter(names = {"--domain-prefix"})
     private String domainPrefix = "cod";
+    @Parameter(names = {"--uid-prefix"})
+    private String uidPrefix = "uid";
     @Parameter(names = {"-t", "--threshold"})
     private double threshold = 0.8;
 }

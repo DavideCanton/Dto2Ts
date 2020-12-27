@@ -18,21 +18,19 @@ import java.util.stream.*;
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 @Getter
-public class ClassNameDecoratorExtension extends Extension
-{
+public class ClassNameDecoratorExtension extends Extension {
     private final ImportHandler importHandler = new ImportHandler();
     private final DomainHandler domainHandler;
     private final Arguments args;
-    private final PropertyTransformer propertyTransformer = new PropertyTransformer();
+    private final PropertyTransformer propertyTransformer;
 
-    public ClassNameDecoratorExtension(Arguments args)
-    {
+    public ClassNameDecoratorExtension(Arguments args) {
         this.args = args;
         this.domainHandler = new DomainHandler(args.getThreshold());
+        this.propertyTransformer = new PropertyTransformer(args);
     }
 
-    public Try<Void, Throwable> init()
-    {
+    public Try<Void, Throwable> init() {
         return Try.withResources(
             () -> new FileReader(args.getDomainFile()),
             this.domainHandler::loadPropertiesFrom,
@@ -42,33 +40,31 @@ public class ClassNameDecoratorExtension extends Extension
             .mapFailure(Function.identity());
     }
 
-    public ImportHandler getImportHandler()
-    {
+    public ImportHandler getImportHandler() {
         return importHandler;
     }
 
     @Override
-    public EmitterExtensionFeatures getFeatures()
-    {
+    public EmitterExtensionFeatures getFeatures() {
         final EmitterExtensionFeatures features = new EmitterExtensionFeatures();
         features.generatesRuntimeCode = true;
         return features;
     }
 
     @Override
-    public List<TransformerDefinition> getTransformers()
-    {
-        return Collections.singletonList(
-            new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
-                model.withBeans(model.getBeans().stream()
-                    .map(ClassNameDecoratorExtension.this::decorateClass)
-                    .collect(Collectors.toList())
-                ))
+    public List<TransformerDefinition> getTransformers() {
+        List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
+
+        transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
+            model.withBeans(model.getBeans().stream()
+                .map(ClassNameDecoratorExtension.this::decorateClass)
+                .collect(Collectors.toList())
+            ))
         );
+        return transformerDefinitions;
     }
 
-    private TsBeanModel decorateClass(TsBeanModel bean)
-    {
+    private TsBeanModel decorateClass(TsBeanModel bean) {
         if (!bean.isClass())
             return bean;
 
@@ -113,15 +109,12 @@ public class ClassNameDecoratorExtension extends Extension
     }
 
 
-    private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName)
-    {
+    private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName) {
         if (property.tsType.equals(TsType.String) &&
-            property.name.startsWith(args.getDomainPrefix()))
-        {
+            property.name.startsWith(args.getDomainPrefix())) {
             val domain = domainHandler.findDomain(property.name.substring(args.getDomainPrefix().length()));
 
-            if (domain.isPresent())
-            {
+            if (domain.isPresent()) {
                 importHandler.registerClassLibraryImport(simpleName, JSON_LOCALIZABLE_PROPERTY);
                 importHandler.registerClassLibraryImport(simpleName, I_LOCALIZABLE_PROPERTY);
                 importHandler.registerClassLibraryImport(simpleName, DOMAINS);
@@ -138,8 +131,7 @@ public class ClassNameDecoratorExtension extends Extension
             .withDecorators(decorators);
     }
 
-    private void putImport(TsDecorator decorator, String simpleName)
-    {
+    private void putImport(TsDecorator decorator, String simpleName) {
         String decoratorName = decorator.getIdentifierReference().getIdentifier();
         importHandler.registerClassLibraryImport(simpleName, decoratorName);
 
@@ -151,26 +143,21 @@ public class ClassNameDecoratorExtension extends Extension
             .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 
-    private Optional<TsDecorator> buildPropertyDecorator(TsPropertyModel property)
-    {
-        if (property.tsType instanceof TsType.BasicArrayType)
-        {
+    private Optional<TsDecorator> buildPropertyDecorator(TsPropertyModel property) {
+        if (property.tsType instanceof TsType.BasicArrayType) {
             TsType element = ((TsType.BasicArrayType) property.tsType).elementType;
             return Optional.of(buildArrayDecorator(property, element));
-        }
-        else if (isBasicType(property.tsType))
+        } else if (isBasicType(property.tsType))
             return buildSimpleDecorator(property);
         else
             return Optional.of(buildComplexDecorator(property.tsType));
     }
 
-    private boolean isBasicType(TsType tsType)
-    {
+    private boolean isBasicType(TsType tsType) {
         return tsType instanceof TsType.BasicType;
     }
 
-    private TsDecorator buildArrayDecorator(TsPropertyModel property, TsType element)
-    {
+    private TsDecorator buildArrayDecorator(TsPropertyModel property, TsType element) {
         String[] split = element.toString().split("\\$");
 
         if (isBasicType(((TsType.BasicArrayType) property.tsType).elementType))
@@ -186,14 +173,12 @@ public class ClassNameDecoratorExtension extends Extension
             );
     }
 
-    private Optional<TsDecorator> buildSimpleDecorator(TsPropertyModel property)
-    {
+    private Optional<TsDecorator> buildSimpleDecorator(TsPropertyModel property) {
         return Optional.of(((TsType.BasicType) property.tsType).name)
             .flatMap(type ->
             {
                 String ret = null;
-                switch (type)
-                {
+                switch (type) {
                     case "string":
                     case "number":
                         ret = JSON_PROPERTY;
@@ -216,8 +201,7 @@ public class ClassNameDecoratorExtension extends Extension
             ));
     }
 
-    private TsDecorator buildComplexDecorator(TsType element)
-    {
+    private TsDecorator buildComplexDecorator(TsType element) {
         String name = Utils.getClassNameFromTsQualifiedName(element.toString());
 
         return new TsDecorator(
