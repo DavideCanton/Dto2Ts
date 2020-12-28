@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.regex.*;
 
 @Getter
-@Service
+@Component
 public class Dto2TsGenerator {
     private Input input;
     private TypeScriptGenerator generator;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.*;
 import java.util.*;
 import java.util.function.*;
 
-@Service
+@Component
 public class ImportHandler {
     private final Map<String, Map<String, Set<String>>> imports = new TreeMap<>();
 

@@ -10,7 +10,7 @@ import java.util.*;
 
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
-@Service
+@Component
 public class PropertyTransformer {
     @Autowired
     private Arguments args;

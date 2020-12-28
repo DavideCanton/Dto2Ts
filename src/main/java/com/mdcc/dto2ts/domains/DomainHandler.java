@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.*;
 
 @Getter
-@Service
+@Component
 public class DomainHandler {
     private List<String> domains = new ArrayList<>();
     private final StringSimilarity algorithm = new NormalizedLevenshtein();

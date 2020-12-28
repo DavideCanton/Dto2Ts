@@ -20,7 +20,7 @@ import java.util.stream.*;
 import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 @Getter
-@Service
+@Component
 public class ClassNameDecoratorExtension extends Extension {
     @Autowired
     private ImportHandler importHandler;
