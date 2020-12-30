@@ -8,7 +8,6 @@ import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import lombok.extern.slf4j.*;
-import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -20,8 +19,8 @@ import java.util.regex.*;
 
 @Component
 @Slf4j
-public class Dto2TsGenerator {
-    private String outputFolder;
+public class Dto2TsGenerator
+{
     @Autowired
     private Arguments arguments;
     @Autowired
@@ -31,24 +30,21 @@ public class Dto2TsGenerator {
     private TypeScriptGenerator generator;
 
     @PostConstruct()
-    public void init() {
+    public void init()
+    {
         input = this.buildInput();
         generator = this.buildGenerator();
     }
 
-    public Try<String, Throwable> generate() {
-        this.outputFolder = arguments.getOutputFolder();
-
-        return this.extension.init()
-            .mapOrCatch(
-                __ -> this.generator.generateTypeScript(this.input),
-                Throwable.class
-            );
+    public Try<String, Throwable> generate()
+    {
+        return Try.withCatch(() -> this.generator.generateTypeScript(this.input), Throwable.class);
     }
 
-    public Try<Integer, Throwable> splitTypeScriptClasses(String typeScriptClasses) {
+    public Try<Integer, Throwable> splitTypeScriptClasses(String typeScriptClasses)
+    {
         Pattern pattern = Pattern.compile("export class (\\w+)", Pattern.MULTILINE);
-        val decorator = String.format("@%s", ImportNames.JSON_CLASS);
+        String decorator = String.format("@%s", ImportNames.JSON_CLASS);
 
         return ReactiveSeq.fromStream(Arrays.stream(typeScriptClasses.trim().split(decorator)))
             .map(s -> s.replace("[];", "[] = [];"))
@@ -67,9 +63,10 @@ public class Dto2TsGenerator {
             .filter(n -> n > 0, __ -> new IllegalStateException("Code not found"));
     }
 
-    private Try<Boolean, Throwable> createTypeScriptFile(String code, String className) {
-        val file = new File(this.outputFolder, Utils.getClassName(className) + ".ts");
-        val path = Try.withCatch(file::getCanonicalPath, IOException.class)
+    private Try<Boolean, Throwable> createTypeScriptFile(String code, String className)
+    {
+        File file = new File(this.arguments.getOutputFolder(), Utils.getClassName(className) + ".ts");
+        String path = Try.withCatch(file::getCanonicalPath, IOException.class)
             .get()
             .orElse("<<INVALID FILE>>");
 
@@ -82,7 +79,8 @@ public class Dto2TsGenerator {
             .onFail(__ -> log.error("Error in writing {}", path));
     }
 
-    private boolean writeFile(String code, String className, PrintWriter pw) {
+    private boolean writeFile(String code, String className, PrintWriter pw)
+    {
         String imports = generateClassImport(className);
         pw.print(imports);
         pw.println();
@@ -90,7 +88,8 @@ public class Dto2TsGenerator {
         return true;
     }
 
-    private String generateClassImport(String className) {
+    private String generateClassImport(String className)
+    {
         return extension
             .getImportHandler()
             .getImportsFor(className)
@@ -106,14 +105,16 @@ public class Dto2TsGenerator {
     }
 
     @NotNull
-    private Input buildInput() {
+    private Input buildInput()
+    {
         Input.Parameters params = new Input.Parameters();
         params.classNamePatterns = Collections.singletonList(arguments.getPattern());
         return Input.from(params);
     }
 
     @NotNull
-    private TypeScriptGenerator buildGenerator() {
+    private TypeScriptGenerator buildGenerator()
+    {
         Settings settings = new Settings();
         settings.jsonLibrary = JsonLibrary.jackson2;
         settings.outputKind = TypeScriptOutputKind.module;

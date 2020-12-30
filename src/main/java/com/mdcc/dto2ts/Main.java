@@ -13,7 +13,8 @@ import java.io.*;
 
 @SpringBootApplication
 @Slf4j
-public class Main implements CommandLineRunner {
+public class Main implements CommandLineRunner
+{
     @Autowired
     private Dto2TsGenerator generator;
     @Autowired
@@ -21,11 +22,13 @@ public class Main implements CommandLineRunner {
     @Autowired
     private DomainHandler domainHandler;
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         SpringApplication.run(Main.class, args);
     }
 
-    private Try<Boolean, Throwable> writeDomainFile() {
+    private Try<Boolean, Throwable> writeDomainFile()
+    {
         val file = new File(arguments.getOutputFolder(), "domains.txt");
         val path = Try.withCatch(file::getCanonicalPath, IOException.class)
             .get()
@@ -44,7 +47,8 @@ public class Main implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args)
+    {
         generator.generate()
             .flatMapOrCatch(generator::splitTypeScriptClasses)
             .flatMapOrCatch(__ -> writeDomainFile())

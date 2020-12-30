@@ -7,7 +7,8 @@ import org.springframework.stereotype.*;
 @SuppressWarnings("unused")
 @Component
 @Getter
-public class Arguments {
+public class Arguments
+{
     @Value("${pattern}")
     private String pattern;
     @Value("${outputFolder:./target}")

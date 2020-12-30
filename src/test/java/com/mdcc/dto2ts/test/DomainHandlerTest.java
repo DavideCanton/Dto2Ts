@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class DomainHandlerTest {
+public class DomainHandlerTest
+{
     @Autowired
     private DomainHandler domainHandler;
 
@@ -26,12 +27,14 @@ public class DomainHandlerTest {
     private Arguments arguments;
 
     @Before
-    public void setup() {
+    public void setup()
+    {
         Mockito.when(arguments.getThreshold()).thenReturn(0.7);
     }
 
     @Test
-    public void testRegisterUsedDomains() {
+    public void testRegisterUsedDomains()
+    {
         this.domainHandler.registerUsedDomain("Domain1");
         this.domainHandler.registerUsedDomain("Domain2");
         this.domainHandler.registerUsedDomain("Domain1");
@@ -44,7 +47,8 @@ public class DomainHandlerTest {
     }
 
     @Test
-    public void testFindDomains() {
+    public void testFindDomains()
+    {
         val s = "miotipo=aaa\nmiodominio=bbb";
         val reader = new StringReader(s);
         assertTrue(this.domainHandler.loadPropertiesFrom(reader).isSuccess());

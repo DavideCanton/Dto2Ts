@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.domains;
 
 import com.mdcc.dto2ts.core.*;
+import com.oath.cyclops.util.*;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
 import info.debatty.java.stringsimilarity.*;
@@ -9,21 +10,32 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
+import javax.annotation.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
 @Getter
 @Component
-public class DomainHandler {
-    private List<String> domains = new ArrayList<>();
+public class DomainHandler
+{
     private final StringSimilarity algorithm = new NormalizedLevenshtein();
     private final Set<String> domainsUsed = new TreeSet<>();
-
+    private List<String> domains = new ArrayList<>();
     @Autowired
     private Arguments arguments;
 
-    public Try<Void, IOException> loadPropertiesFrom(Reader reader) {
+    @PostConstruct()
+    public void init() throws IOException
+    {
+        try (FileReader fr = new FileReader(arguments.getDomainFile()))
+        {
+            this.loadPropertiesFrom(fr).onFail(ExceptionSoftener::throwSoftenedException);
+        }
+    }
+
+    public Try<Void, IOException> loadPropertiesFrom(Reader reader)
+    {
         return Try.runWithCatch(
             () -> {
                 val p = new Properties();
@@ -38,7 +50,8 @@ public class DomainHandler {
         );
     }
 
-    public Optional<String> findDomain(String propertyName) {
+    public Optional<String> findDomain(String propertyName)
+    {
         Comparator<Tuple2<String, Double>> c = Comparator.comparingDouble(Tuple2::_2);
         String lowercaseProperty = propertyName.toLowerCase(Locale.ROOT);
 
@@ -49,7 +62,8 @@ public class DomainHandler {
             .map(Tuple2::_1);
     }
 
-    public void registerUsedDomain(String domain) {
+    public void registerUsedDomain(String domain)
+    {
         this.domainsUsed.add(domain);
     }
 }

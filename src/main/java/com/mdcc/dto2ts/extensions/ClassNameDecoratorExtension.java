@@ -1,59 +1,61 @@
 package com.mdcc.dto2ts.extensions;
 
+import com.mdcc.dto2ts.context.*;
 import com.mdcc.dto2ts.core.*;
+import com.mdcc.dto2ts.decorators.*;
 import com.mdcc.dto2ts.domains.*;
 import com.mdcc.dto2ts.imports.*;
+import com.mdcc.dto2ts.transformers.*;
 import com.mdcc.dto2ts.utils.*;
-import cyclops.control.*;
+import cyclops.data.tuple.*;
+import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
 import lombok.*;
+import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import java.io.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
-import static com.mdcc.dto2ts.imports.ImportNames.*;
+import static com.mdcc.dto2ts.imports.ImportNames.JSON_CLASS;
+import static com.mdcc.dto2ts.imports.ImportNames.SERIALIZE_FN;
 
 @Getter
 @Component
-public class ClassNameDecoratorExtension extends Extension {
+public class ClassNameDecoratorExtension extends Extension
+{
     @Autowired
     private ImportHandler importHandler;
     @Autowired
     private DomainHandler domainHandler;
     @Autowired
     private Arguments args;
+
     @Autowired
-    private PropertyTransformer propertyTransformer;
+    @TransformAfterDecorate
+    private List<PropertyTransformer> afterDecoratePropertyTransformers;
 
-    public Try<Void, Throwable> init() {
-        return Try.withResources(
-            () -> new FileReader(args.getDomainFile()),
-            this.domainHandler::loadPropertiesFrom,
-            IOException.class
-        )
-            .flatMap(t -> t)
-            .mapFailure(Function.identity());
-    }
+    @Autowired
+    @TransformBeforeDecorate
+    private List<PropertyTransformer> beforeDecoratePropertyTransformers;
 
-    public ImportHandler getImportHandler() {
-        return importHandler;
-    }
+    @Autowired
+    private List<PropertyDecorator> propertyDecorators;
 
     @Override
-    public EmitterExtensionFeatures getFeatures() {
+    public EmitterExtensionFeatures getFeatures()
+    {
         final EmitterExtensionFeatures features = new EmitterExtensionFeatures();
         features.generatesRuntimeCode = true;
         return features;
     }
 
     @Override
-    public List<TransformerDefinition> getTransformers() {
+    public List<TransformerDefinition> getTransformers()
+    {
         List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
 
         transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
@@ -65,74 +67,128 @@ public class ClassNameDecoratorExtension extends Extension {
         return transformerDefinitions;
     }
 
-    private TsBeanModel decorateClass(TsBeanModel bean) {
+    private TsBeanModel decorateClass(TsBeanModel bean)
+    {
         if (!bean.isClass())
             return bean;
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
+        registerDefaultImports(className);
+        implementVisitableInterface(bean);
+
+        return bean
+            .withDecorators(buildClassDecorators())
+            .withProperties(
+                Stream.concat(
+                    bean.getProperties().stream()
+                        .map(p -> buildPropertyContext(p, className))
+                        .map(c -> applyWhileNull(beforeDecoratePropertyTransformers, c))
+                        .map(c -> applyWhileNull(propertyDecorators, c))
+                        .peek(c -> c.getDecorators().forEach(decorator -> putImport(decorator, c.getClassName())))
+                        .map(c -> applyWhileNull(afterDecoratePropertyTransformers, c))
+                        .map(PropertyContext::getPropertyModel),
+                    Stream.of(buildSerializeProperty())
+                ).collect(Collectors.toList())
+            )
+            .withMethods(buildMethods(className));
+    }
+
+    private void implementVisitableInterface(TsBeanModel bean)
+    {
+        bean.getImplementsList()
+            .add(
+                new TsType.GenericBasicType(
+                    args.getVisitableName(),
+                    new TsType.BasicType(args.getVisitorName())
+                )
+            );
+    }
+
+    private void registerDefaultImports(String className)
+    {
         importHandler.registerClassLibraryImport(className, JSON_CLASS);
         importHandler.registerClassLibraryImport(className, SERIALIZE_FN);
         importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
         importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
-        bean.getImplementsList().add(new TsType.GenericBasicType(args.getVisitableName(), new TsType.BasicType(args.getVisitorName())));
+    }
 
-        return bean
-            .withDecorators(Collections.singletonList(new TsDecorator(
-                new TsIdentifierReference(JSON_CLASS),
-                Collections.emptyList()
-            )))
-            .withProperties(
-                Stream.concat(
-                    bean.getProperties().stream()
-                        .map(propertyTransformer::transformPropertyTypeBeforeDecorate)
-                        .map(property -> decorateProperty(property, className))
-                        .map(propertyTransformer::transformPropertyTypeAfterDecorate),
-                    Stream.of(propertyTransformer.buildSerializeProperty())
+    @NotNull
+    private List<TsDecorator> buildClassDecorators()
+    {
+        return Collections.singletonList(buildJsonClassDecorator());
+    }
+
+    @NotNull
+    private TsDecorator buildJsonClassDecorator()
+    {
+        return new TsDecorator(
+            new TsIdentifierReference(JSON_CLASS),
+            Collections.emptyList()
+        );
+    }
+
+    @NotNull
+    private List<TsMethodModel> buildMethods(String className)
+    {
+        return Collections.singletonList(buildAcceptMethod(className));
+    }
+
+    @NotNull
+    private TsMethodModel buildAcceptMethod(String className)
+    {
+        String visitorVariableName = "visitor";
+        String visitMethodName = "visit";
+
+        return new TsMethodModel(
+            "accept",
+            TsModifierFlags.None,
+            Collections.emptyList(),
+            Collections.singletonList(
+                new TsParameterModel(
+                    visitorVariableName,
+                    new TsType.BasicType(args.getVisitorName())
                 )
-                    .collect(Collectors.toList())
-            )
-            .withMethods(Collections.singletonList(new TsMethodModel(
-                "accept",
-                TsModifierFlags.None,
-                Collections.emptyList(),
-                Collections.singletonList(new TsParameterModel("visitor", new TsType.BasicType(args.getVisitorName()))),
-                TsType.Void,
-                Collections.singletonList(
-                    new TsExpressionStatement(
-                        new TsCallExpression(
-                            new TsMemberExpression(new TsIdentifierReference("visitor"), "visit" + className),
-                            new TsThisExpression()
-                        )
+            ),
+            TsType.Void,
+            Collections.singletonList(
+                new TsExpressionStatement(
+                    new TsCallExpression(
+                        new TsMemberExpression(
+                            new TsIdentifierReference(visitorVariableName),
+                            visitMethodName + className
+                        ),
+                        new TsThisExpression()
                     )
-                ),
-                null
-            )));
+                )
+            ),
+            null
+        );
     }
 
-
-    private TsPropertyModel decorateProperty(TsPropertyModel property, String simpleName) {
-        if (property.tsType.equals(TsType.String) &&
-            property.name.startsWith(args.getDomainPrefix())) {
-            val domain = domainHandler.findDomain(property.name.substring(args.getDomainPrefix().length()));
-
-            if (domain.isPresent()) {
-                importHandler.registerClassLibraryImport(simpleName, JSON_LOCALIZABLE_PROPERTY);
-                importHandler.registerClassLibraryImport(simpleName, I_LOCALIZABLE_PROPERTY);
-                importHandler.registerClassLibraryImport(simpleName, DOMAINS);
-                domainHandler.registerUsedDomain(domain.get());
-                return propertyTransformer.buildDomainProperty(property, domain.get());
-            }
-        }
-
-        List<TsDecorator> decorators = new ArrayList<>();
-        buildPropertyDecorator(property).ifPresent(decorators::add);
-
-        decorators.forEach(decorator -> putImport(decorator, simpleName));
-        return property
-            .withDecorators(decorators);
+    private <T extends ContextTransformer> PropertyContext applyWhileNull(List<T> list, PropertyContext startingValue)
+    {
+        return ReactiveSeq.fromStream(list.stream())
+            .reduce(
+                Tuple2.of(false, startingValue),
+                (acc, t) -> Boolean.TRUE.equals(acc._1()) ? acc : (
+                    t.transformContext(startingValue)
+                        .map(c -> Tuple2.of(true, c))
+                        .orElse(acc)
+                )
+            )
+            ._2();
     }
 
-    private void putImport(TsDecorator decorator, String simpleName) {
+    private PropertyContext buildPropertyContext(TsPropertyModel propertyModel, String className)
+    {
+        return PropertyContext.builder()
+            .className(className)
+            .propertyModel(propertyModel)
+            .build();
+    }
+
+    private void putImport(TsDecorator decorator, String simpleName)
+    {
         String decoratorName = decorator.getIdentifierReference().getIdentifier();
         importHandler.registerClassLibraryImport(simpleName, decoratorName);
 
@@ -144,70 +200,14 @@ public class ClassNameDecoratorExtension extends Extension {
             .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 
-    private Optional<TsDecorator> buildPropertyDecorator(TsPropertyModel property) {
-        if (property.tsType instanceof TsType.BasicArrayType) {
-            TsType element = ((TsType.BasicArrayType) property.tsType).elementType;
-            return Optional.of(buildArrayDecorator(property, element));
-        } else if (isBasicType(property.tsType))
-            return buildSimpleDecorator(property);
-        else
-            return Optional.of(buildComplexDecorator(property.tsType));
-    }
-
-    private boolean isBasicType(TsType tsType) {
-        return tsType instanceof TsType.BasicType;
-    }
-
-    private TsDecorator buildArrayDecorator(TsPropertyModel property, TsType element) {
-        String[] split = element.toString().split("\\$");
-
-        if (isBasicType(((TsType.BasicArrayType) property.tsType).elementType))
-            return new TsDecorator(
-                new TsIdentifierReference(JSON_ARRAY),
-                Collections.emptyList());
-        else
-            return new TsDecorator(
-                new TsIdentifierReference(JSON_ARRAY_OF_COMPLEX_PROPERTY),
-                Collections.singletonList(
-                    new TsIdentifierReference(split[split.length - 1])
-                )
-            );
-    }
-
-    private Optional<TsDecorator> buildSimpleDecorator(TsPropertyModel property) {
-        return Optional.of(((TsType.BasicType) property.tsType).name)
-            .flatMap(type ->
-            {
-                String ret = null;
-                switch (type) {
-                    case "string":
-                    case "number":
-                        ret = JSON_PROPERTY;
-                        break;
-                    case "boolean":
-                        ret = JSON_FLAG;
-                        break;
-                    case "Date":
-                        ret = JSON_DATE_ISO;
-                        break;
-                    default:
-                        break;
-
-                }
-                return Optional.ofNullable(ret);
-            })
-            .map(tsIdentifierReference -> new TsDecorator(
-                new TsIdentifierReference(tsIdentifierReference),
-                Collections.emptyList()
-            ));
-    }
-
-    private TsDecorator buildComplexDecorator(TsType element) {
-        String name = Utils.getClassNameFromTsQualifiedName(element.toString());
-
-        return new TsDecorator(
-            new TsIdentifierReference(JSON_COMPLEX_PROPERTY),
-            Collections.singletonList(new TsIdentifierReference(name))
+    private TsPropertyModel buildSerializeProperty()
+    {
+        return new TsPropertyModel(
+            "serialize",
+            new TsType.BasicType(SERIALIZE_FN),
+            TsModifierFlags.None,
+            true,
+            null
         );
     }
 
