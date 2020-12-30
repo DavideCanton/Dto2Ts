@@ -1,35 +1,36 @@
-package com.mdcc.dto2ts.test;
+package com.mdcc.dto2ts.test.domains;
 
 import com.mdcc.dto2ts.core.*;
 import com.mdcc.dto2ts.domains.*;
+import com.mdcc.dto2ts.test.*;
 import lombok.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.boot.test.mock.mockito.*;
-import org.springframework.test.context.junit4.*;
+import org.mockito.junit.*;
 
-import java.io.*;
+import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class DomainHandlerTest
+@RunWith(MockitoJUnitRunner.class)
+public class DomainHandlerTest extends BaseUnitTestClass
 {
-    @Autowired
-    private DomainHandler domainHandler;
-
-    @MockBean
+    @Mock
     private Arguments arguments;
 
+    @InjectMocks
+    private DomainHandler domainHandler;
+
+    @SneakyThrows
     @Before
     public void setup()
     {
-        Mockito.when(arguments.getThreshold()).thenReturn(0.7);
+        when(arguments.getDomainFile()).thenReturn("src/test/resources/test-domains.properties");
+        when(arguments.getThreshold()).thenReturn(0.7);
+        domainHandler.init();
     }
 
     @Test
@@ -39,7 +40,7 @@ public class DomainHandlerTest
         this.domainHandler.registerUsedDomain("Domain2");
         this.domainHandler.registerUsedDomain("Domain1");
 
-        val domains = this.domainHandler.getDomainsUsed();
+        Set<String> domains = this.domainHandler.getDomainsUsed();
         assertEquals(2, domains.size());
         assertTrue(domains.contains("Domain1"));
         assertTrue(domains.contains("Domain2"));
@@ -49,9 +50,6 @@ public class DomainHandlerTest
     @Test
     public void testFindDomains()
     {
-        val s = "miotipo=aaa\nmiodominio=bbb";
-        val reader = new StringReader(s);
-        assertTrue(this.domainHandler.loadPropertiesFrom(reader).isSuccess());
         assertEquals("miotipo", this.domainHandler.findDomain("MoiTipo").get());
         assertEquals("miodominio", this.domainHandler.findDomain("MioDminio").get());
     }

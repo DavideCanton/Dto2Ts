@@ -26,6 +26,9 @@ public class DomainPropertyTransformer implements PropertyTransformer
     @Autowired
     private ImportHandler importHandler;
 
+    private static final String DOMAIN_KEY = "domain";
+
+
     private Optional<String> getDomain(TsPropertyModel property)
     {
         if (property.tsType.equals(TsType.String) &&
@@ -40,7 +43,7 @@ public class DomainPropertyTransformer implements PropertyTransformer
     public Optional<PropertyContext> transformProperty(PropertyContext context)
     {
         return getDomain(context.getPropertyModel())
-            .map(domain -> new DomainPropertyContext(context).withDomain(domain))
+            .map(domain -> context.addExtendedProperty(DOMAIN_KEY, domain))
             .map(newContext -> {
                 registerImports(newContext);
                 newContext.setPropertyModel(buildProperty(newContext));
@@ -48,7 +51,7 @@ public class DomainPropertyTransformer implements PropertyTransformer
             });
     }
 
-    private TsPropertyModel buildProperty(DomainPropertyContext context)
+    private TsPropertyModel buildProperty(PropertyContext context)
     {
         return new TsPropertyModel(
             context.getPropertyModel().name,
@@ -62,18 +65,25 @@ public class DomainPropertyTransformer implements PropertyTransformer
                 Collections.singletonList(
                     new TsMemberExpression(
                         new TsIdentifierReference(DOMAINS),
-                        context.getDomain()
+                        getDomainFromContext(context)
                     )
                 )
             ))
         );
     }
 
-    private void registerImports(DomainPropertyContext info)
+    private void registerImports(PropertyContext info)
     {
         importHandler.registerClassLibraryImport(info.getClassName(), JSON_LOCALIZABLE_PROPERTY);
         importHandler.registerClassLibraryImport(info.getClassName(), I_LOCALIZABLE_PROPERTY);
         importHandler.registerClassLibraryImport(info.getClassName(), DOMAINS);
-        domainHandler.registerUsedDomain(info.getDomain());
+        domainHandler.registerUsedDomain(getDomainFromContext(info));
+    }
+
+    private String getDomainFromContext(PropertyContext context)
+    {
+        return context.getExtendedProperty(DOMAIN_KEY)
+            .map(Object::toString)
+            .orElse("");
     }
 }
