@@ -2,6 +2,8 @@ package com.mdcc.dto2ts.utils;
 
 import com.google.common.base.*;
 
+import java.util.*;
+
 public class Utils {
 
     private Utils() {
@@ -12,7 +14,8 @@ public class Utils {
     }
 
     public static String getClassNameFromTsQualifiedName(String name) {
-        String[] split = name.split("\\$");
-        return split[split.length - 1];
+        return Arrays.stream(name.split("\\$"))
+            .reduce((a, b) -> b)
+            .orElse("");
     }
 }

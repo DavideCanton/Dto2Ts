@@ -1,32 +1,31 @@
 package com.mdcc.dto2ts.core;
 
-import com.beust.jcommander.*;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.*;
 
-@Data
+@SuppressWarnings("unused")
 @Component
+@Getter
 public class Arguments {
-    @Parameter(required = true, names = {"-p", "--pattern"})
+    @Value("${pattern}")
     private String pattern;
-    @Parameter(names = {"-o", "--output-folder"})
-    private String outputFolder = "./target";
-    @Parameter(names = {"--visitable-name"})
+    @Value("${outputFolder:./target}")
+    private String outputFolder;
+    @Value("${visitableName}")
     private String visitableName;
-    @Parameter(names = {"--visitable-path"})
+    @Value("${visitablePath}")
     private String visitablePath;
-    @Parameter(names = {"--visitor-name"})
+    @Value("${visitorName}")
     private String visitorName;
-    @Parameter(names = {"--visitor-path"})
+    @Value("${visitorPath}")
     private String visitorPath;
-    @Parameter(names = {"-h", "--help"}, help = true)
-    private boolean help;
-    @Parameter(names = {"--domain-file", "-d"})
+    @Value("${domainFile}")
     private String domainFile;
-    @Parameter(names = {"--domain-prefix"})
-    private String domainPrefix = "cod";
-    @Parameter(names = {"--uid-prefix"})
-    private String uidPrefix = "uid";
-    @Parameter(names = {"-t", "--threshold"})
-    private double threshold = 0.8;
+    @Value("${domainPrefix:cod}")
+    private String domainPrefix;
+    @Value("${uidPrefix:uid}")
+    private String uidPrefix;
+    @Value("${threshold:0.8}")
+    private double threshold;
 }

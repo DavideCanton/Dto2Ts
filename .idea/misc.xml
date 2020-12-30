@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="javax.annotation.PostConstruct" />
+      <item index="1" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Around" />
+      <item index="2" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Aspect" />
+      <item index="3" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Before" />
+      <item index="4" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
+      <item index="5" class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
+    </list>
     <writeAnnotations>
       <writeAnnotation name="org.springframework.beans.factory.annotation.Autowired" />
       <writeAnnotation name="org.springframework.boot.test.mock.mockito.MockBean" />
+      <writeAnnotation name="com.beust.jcommander.Parameter" />
     </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />

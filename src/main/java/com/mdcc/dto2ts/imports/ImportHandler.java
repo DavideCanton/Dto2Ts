@@ -3,6 +3,7 @@ package com.mdcc.dto2ts.imports;
 import com.mdcc.dto2ts.utils.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
+import lombok.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -46,11 +47,13 @@ public class ImportHandler {
         return imports.computeIfAbsent(className, __ -> new TreeMap<>(Comparator.comparing(
             s -> s,
             (o1, o2) -> {
-                boolean isRelative1 = isRelative.test(o1);
-                boolean isRelative2 = isRelative.test(o2);
+                val isRelative1 = isRelative.test(o1);
+                val isRelative2 = isRelative.test(o2);
 
-                if (isRelative1 == isRelative2) return o1.compareTo(o2);
-                return isRelative1 ? 1 : -1;
+                if (isRelative1 == isRelative2)
+                    return o1.compareTo(o2);
+                else
+                    return isRelative1 ? 1 : -1;
             }
         )));
     }
