@@ -15,7 +15,7 @@ import org.mockito.junit.*;
 
 import java.util.*;
 
-import static com.mdcc.dto2ts.imports.ImportNames.*;
+import static com.mdcc.dto2ts.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -67,25 +67,11 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
 
         assertEquals(property.getName(), resultProperty.getName());
         assertEquals(
-            new TsType.NullableType(new TsType.GenericBasicType(I_LOCALIZABLE_PROPERTY, TsType.String)),
+            new TsType.GenericBasicType(I_LOCALIZABLE_PROPERTY, TsType.String),
             resultProperty.getTsType()
         );
 
-        List<TsDecorator> decorators = resultProperty.getDecorators();
-        assertEquals(1, decorators.size());
-
-        TsDecorator d = decorators.get(0);
-        assertEquals(1, d.getArguments().size());
-        assertEquals(JSON_LOCALIZABLE_PROPERTY, d.getIdentifierReference().getIdentifier());
-
-        TsMemberExpression expr = (TsMemberExpression) d.getArguments().get(0);
-        assertEquals(domain, expr.getIdentifierName());
-        assertEquals(DOMAINS, ((TsIdentifierReference) expr.getExpression()).getIdentifier());
-
-        verify(importHandler, times(1)).registerClassLibraryImport(ctx.getClassName(), JSON_LOCALIZABLE_PROPERTY);
         verify(importHandler, times(1)).registerClassLibraryImport(ctx.getClassName(), I_LOCALIZABLE_PROPERTY);
-        verify(importHandler, times(1)).registerClassLibraryImport(ctx.getClassName(), DOMAINS);
-        verify(domainHandler, times(1)).registerUsedDomain(domain);
     }
 
     @Test
