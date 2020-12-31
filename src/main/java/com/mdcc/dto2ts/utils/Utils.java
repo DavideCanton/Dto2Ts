@@ -5,9 +5,8 @@ import cz.habarta.typescript.generator.*;
 
 import java.util.*;
 
-public class Utils
+public final class Utils
 {
-
     private Utils()
     {
     }

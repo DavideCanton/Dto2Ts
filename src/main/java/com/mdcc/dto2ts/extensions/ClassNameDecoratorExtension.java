@@ -3,7 +3,6 @@ package com.mdcc.dto2ts.extensions;
 import com.mdcc.dto2ts.context.*;
 import com.mdcc.dto2ts.core.*;
 import com.mdcc.dto2ts.decorators.*;
-import com.mdcc.dto2ts.domains.*;
 import com.mdcc.dto2ts.imports.*;
 import com.mdcc.dto2ts.transformers.*;
 import com.mdcc.dto2ts.utils.*;
@@ -12,7 +11,6 @@ import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
-import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -23,14 +21,11 @@ import java.util.stream.*;
 import static com.mdcc.dto2ts.imports.ImportNames.JSON_CLASS;
 import static com.mdcc.dto2ts.imports.ImportNames.SERIALIZE_FN;
 
-@Getter
 @Component
 public class ClassNameDecoratorExtension extends Extension
 {
     @Autowired
     private ImportHandler importHandler;
-    @Autowired
-    private DomainHandler domainHandler;
     @Autowired
     private Arguments args;
 
@@ -86,7 +81,7 @@ public class ClassNameDecoratorExtension extends Extension
                         .map(c -> applyWhileNull(propertyDecorators, c))
                         .peek(c -> c.getDecorators().forEach(decorator -> putImport(decorator, c.getClassName())))
                         .map(c -> applyWhileNull(afterDecoratePropertyTransformers, c))
-                        .map(PropertyContext::getPropertyModel),
+                        .map(PropertyContext::getPropertyWithDecorators),
                     Stream.of(buildSerializeProperty())
                 ).collect(Collectors.toList())
             )
@@ -167,7 +162,7 @@ public class ClassNameDecoratorExtension extends Extension
 
     private <T extends ContextTransformer> PropertyContext applyWhileNull(List<T> list, PropertyContext startingValue)
     {
-        return ReactiveSeq.fromStream(list.stream())
+        return ReactiveSeq.fromList(list)
             .reduce(
                 Tuple2.of(false, startingValue),
                 (acc, t) -> Boolean.TRUE.equals(acc._1()) ? acc : (

@@ -16,6 +16,7 @@ import javax.annotation.*;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import java.util.stream.*;
 
 @Component
 @Slf4j
@@ -25,6 +26,8 @@ public class Dto2TsGenerator
     private Arguments arguments;
     @Autowired
     private ClassNameDecoratorExtension extension;
+    @Autowired
+    private ImportHandler importHandler;
 
     private Input input;
     private TypeScriptGenerator generator;
@@ -46,7 +49,7 @@ public class Dto2TsGenerator
         Pattern pattern = Pattern.compile("export class (\\w+)", Pattern.MULTILINE);
         String decorator = String.format("@%s", ImportNames.JSON_CLASS);
 
-        return ReactiveSeq.fromStream(Arrays.stream(typeScriptClasses.trim().split(decorator)))
+        return ReactiveSeq.fromStream(Stream.of(typeScriptClasses.trim().split(decorator)))
             .map(s -> s.replace("[];", "[] = [];"))
             .map(s -> decorator + s)
             .map(s -> Tuple2.of(s, pattern.matcher(s)))
@@ -90,8 +93,7 @@ public class Dto2TsGenerator
 
     private String generateClassImport(String className)
     {
-        return extension
-            .getImportHandler()
+        return importHandler
             .getImportsFor(className)
             .reduce(
                 new StringBuilder(),

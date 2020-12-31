@@ -5,22 +5,25 @@ import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.emitter.*;
 import org.springframework.stereotype.*;
 
-import static com.mdcc.dto2ts.imports.ImportNames.JSON_COMPLEX_PROPERTY;
-import static com.mdcc.dto2ts.imports.ImportNames.JSON_DATE_ISO;
+import java.util.*;
+
+import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 @Component
 @TransformAfterDecorate
 public class AddNullablePropertyTransformer extends ConditionPropertyTransformer
 {
+    private final Set<String> nullablePropertyDecorators = new HashSet<>(Arrays.asList(JSON_DATE_ISO, JSON_COMPLEX_PROPERTY, JSON_LOCALIZABLE_PROPERTY));
+
     @Override
     protected boolean canTransform(PropertyContext context)
     {
-        return context.getPropertyModel()
+        return context
             .getDecorators()
             .stream()
             .map(TsDecorator::getIdentifierReference)
             .map(TsIdentifierReference::getIdentifier)
-            .anyMatch(identifier -> identifier.equals(JSON_DATE_ISO) || identifier.equals(JSON_COMPLEX_PROPERTY));
+            .anyMatch(nullablePropertyDecorators::contains);
     }
 
     @Override

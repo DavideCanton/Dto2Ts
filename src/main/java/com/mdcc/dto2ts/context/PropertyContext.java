@@ -36,7 +36,7 @@ public class PropertyContext
         return this.withDecorators(newDecorators);
     }
 
-    public PropertyContext addExtendedProperty(String key, Object value)
+    public PropertyContext withExtendedProperty(String key, Object value)
     {
         PropertyContext copy = this.copy();
         copy.extendedProperties.put(key, value);
@@ -56,5 +56,11 @@ public class PropertyContext
             .extendedProperties(new HashMap<>(this.extendedProperties))
             .decorators(new ArrayList<>(this.decorators))
             .build();
+    }
+
+    public TsPropertyModel getPropertyWithDecorators()
+    {
+        return propertyModel
+            .withDecorators(decorators);
     }
 }

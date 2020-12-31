@@ -31,8 +31,7 @@ public class Main implements CommandLineRunner
     {
         val file = new File(arguments.getOutputFolder(), "domains.txt");
         val path = Try.withCatch(file::getCanonicalPath, IOException.class)
-            .get()
-            .orElse("<<INVALID FILE>>");
+            .fold(__ -> __, __ -> "<<INVALID FILE>>");
 
         return Try.withResources(
             () -> new PrintWriter(new FileWriter(file)),
@@ -50,8 +49,8 @@ public class Main implements CommandLineRunner
     public void run(String... args)
     {
         generator.generate()
-            .flatMapOrCatch(generator::splitTypeScriptClasses)
-            .flatMapOrCatch(__ -> writeDomainFile())
+            .flatMapOrCatch(generator::splitTypeScriptClasses, Throwable.class)
+            .flatMapOrCatch(__ -> writeDomainFile(), Throwable.class)
             .peek(__ -> log.info("Finished!"))
             .onFail(t -> log.error("Error", t));
     }
