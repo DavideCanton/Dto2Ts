@@ -6,6 +6,7 @@ import com.mdcc.dto2ts.decorators.*;
 import com.mdcc.dto2ts.imports.*;
 import com.mdcc.dto2ts.transformers.*;
 import com.mdcc.dto2ts.utils.*;
+import com.mdcc.dto2ts.visitor.VisitorContext;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
@@ -15,6 +16,7 @@ import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.*;
@@ -29,6 +31,8 @@ public class ClassNameDecoratorExtension extends Extension
     private ImportHandler importHandler;
     @Autowired
     private Arguments args;
+    @Autowired
+    private VisitorContext visitorContext;
 
     @Autowired
     @TransformAfterDecorate
@@ -55,12 +59,55 @@ public class ClassNameDecoratorExtension extends Extension
         List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
 
         transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
-            model.withBeans(model.getBeans().stream()
-                .map(ClassNameDecoratorExtension.this::decorateClass)
-                .collect(Collectors.toList())
+            model.withBeans(getBeans(model)
             ))
         );
         return transformerDefinitions;
+    }
+
+    @NotNull
+    private List<TsBeanModel> getBeans(TsModel model) {
+        List<TsBeanModel> beans = model.getBeans().stream()
+                .map(ClassNameDecoratorExtension.this::decorateClass)
+                .collect(Collectors.toList());
+
+        if(args.isCreateVisitor()) {
+            beans.add(new TsBeanModel(null,
+                    TsBeanCategory.Data,
+                    false,
+                    new Symbol(Utils.getVisitorName(args.getVisitorName())),
+                    Collections.emptyList(),
+                    null,
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    null,
+                    visitorContext.getVisitedClasses().stream().map(this::buildVisitMethod).collect(Collectors.toList()),
+                    null)
+                    .withDecorators(buildClassDecorators()));
+        }
+        return beans;
+    }
+
+    private TsMethodModel buildVisitMethod(String className)
+    {
+        String visitorVariableName = StringUtils.uncapitalize(className);
+        String visitMethodName = "visit" + className;
+
+        return new TsMethodModel(
+                visitMethodName,
+                TsModifierFlags.None,
+                Collections.emptyList(),
+                Collections.singletonList(
+                        new TsParameterModel(
+                                visitorVariableName,
+                                new TsType.BasicType(className)
+                        )
+                ),
+                TsType.Void,
+                null,
+                null
+        );
     }
 
     private TsBeanModel decorateClass(TsBeanModel bean)
@@ -70,6 +117,7 @@ public class ClassNameDecoratorExtension extends Extension
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
         registerDefaultImports(className);
+        visitorContext.addClass(className);
 
         if (args.isCreateVisitor())
             implementVisitableInterface(bean);
@@ -97,7 +145,7 @@ public class ClassNameDecoratorExtension extends Extension
             .add(
                 new TsType.GenericBasicType(
                     args.getVisitableName(),
-                    new TsType.BasicType(args.getVisitorName())
+                    new TsType.BasicType(Utils.getVisitorName(args.getVisitorName()))
                 )
             );
     }
@@ -110,7 +158,10 @@ public class ClassNameDecoratorExtension extends Extension
         if (args.isCreateVisitor())
         {
             importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
-            importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
+            importHandler.registerExternalImport(
+                    className,
+                    Utils.getVisitorName(args.getVisitorName()),
+                    Utils.getVisitorPath(args.getVisitablePath()));
         }
     }
 
@@ -152,7 +203,7 @@ public class ClassNameDecoratorExtension extends Extension
             Collections.singletonList(
                 new TsParameterModel(
                     visitorVariableName,
-                    new TsType.BasicType(args.getVisitorName())
+                    new TsType.BasicType(Utils.getVisitorName(args.getVisitorName()))
                 )
             ),
             TsType.Void,

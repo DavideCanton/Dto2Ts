@@ -11,8 +11,7 @@ import java.util.stream.*;
 @SuppressWarnings("unused")
 @Component
 @Getter
-public class Arguments
-{
+public class Arguments {
     @Value("${pattern}")
     private String pattern;
     @Value("${outputFolder:./target}")
@@ -25,8 +24,6 @@ public class Arguments
     private String visitablePath;
     @Value("${visitorName:}")
     private String visitorName;
-    @Value("${visitorPath:}")
-    private String visitorPath;
     @Value("${domainFile}")
     private String domainFile;
     @Value("${domainPrefix:cod}")
@@ -40,10 +37,10 @@ public class Arguments
         var valid = true;
         val messages = new ArrayList<String>();
 
-        if(createVisitor) {
-            val hasVisitable = Stream.of(this.visitableName, this.visitorName, this.visitorPath, this.visitablePath)
-                .allMatch(s -> s != null && !s.isEmpty());
-            if(!hasVisitable) {
+        if (createVisitor) {
+            val hasVisitable = Stream.of(this.visitableName, this.visitorName, this.visitablePath)
+                    .allMatch(s -> s != null && !s.isEmpty());
+            if (!hasVisitable) {
                 valid = false;
                 messages.add("If createVisitor is true, visitor parameters should be not empty");
             }

@@ -37,4 +37,14 @@ public final class Utils
     {
         return !isBasicType(tsType) && !isArrayType(tsType);
     }
+
+    public static String getVisitorName(String symbol)
+    {
+        return String.format("I%sVisitor", CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, symbol));
+    }
+
+    public static String getVisitorPath(String symbol)
+    {
+        return String.format("./%s.visitor", symbol);
+    }
 }
