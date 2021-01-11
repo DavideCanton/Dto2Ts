@@ -11,6 +11,7 @@ import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
+import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
@@ -69,7 +70,9 @@ public class ClassNameDecoratorExtension extends Extension
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
         registerDefaultImports(className);
-        implementVisitableInterface(bean);
+
+        if (args.isCreateVisitor())
+            implementVisitableInterface(bean);
 
         return bean
             .withDecorators(buildClassDecorators())
@@ -103,8 +106,12 @@ public class ClassNameDecoratorExtension extends Extension
     {
         importHandler.registerClassLibraryImport(className, JSON_CLASS);
         importHandler.registerClassLibraryImport(className, SERIALIZE_FN);
-        importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
-        importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
+
+        if (args.isCreateVisitor())
+        {
+            importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
+            importHandler.registerExternalImport(className, args.getVisitorName(), args.getVisitorPath());
+        }
     }
 
     @NotNull
@@ -125,7 +132,11 @@ public class ClassNameDecoratorExtension extends Extension
     @NotNull
     private List<TsMethodModel> buildMethods(String className)
     {
-        return Collections.singletonList(buildAcceptMethod(className));
+        val list = new ArrayList<TsMethodModel>();
+
+        if (args.isCreateVisitor()) list.add(buildAcceptMethod(className));
+
+        return list;
     }
 
     @NotNull

@@ -5,11 +5,14 @@ import com.mdcc.dto2ts.domains.*;
 import cyclops.control.*;
 import lombok.extern.slf4j.*;
 import lombok.*;
+import org.codehaus.plexus.util.*;
+import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 
 import java.io.*;
+import java.util.*;
 
 @SpringBootApplication
 @Slf4j
@@ -35,7 +38,8 @@ public class Main implements CommandLineRunner
 
         return Try.withResources(
             () -> new PrintWriter(new FileWriter(file)),
-            w -> {
+            w ->
+            {
                 domainHandler.getDomainsUsed().forEach(w::println);
                 return true;
             },
@@ -48,10 +52,21 @@ public class Main implements CommandLineRunner
     @Override
     public void run(String... args)
     {
-        generator.generate()
-            .flatMapOrCatch(generator::splitTypeScriptClasses, Throwable.class)
-            .flatMapOrCatch(__ -> writeDomainFile(), Throwable.class)
+        arguments.isValid()
+            .flatMap(__ ->
+                generator.generate()
+                    .flatMapOrCatch(generator::splitTypeScriptClasses, Throwable.class)
+                    .flatMapOrCatch(___ -> writeDomainFile(), Throwable.class)
+                    .toEither()
+                    .mapLeft(t -> Collections.singletonList(getFullStackTrace(t)))
+            )
             .peek(__ -> log.info("Finished!"))
-            .onFail(t -> log.error("Error", t));
+            .peekLeft(s -> log.error("Error: {}", s));
+    }
+
+    @NotNull
+    private String getFullStackTrace(Throwable t)
+    {
+        return ExceptionUtils.getFullStackTrace(t);
     }
 }

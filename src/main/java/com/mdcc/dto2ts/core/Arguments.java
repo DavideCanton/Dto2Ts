@@ -1,8 +1,12 @@
 package com.mdcc.dto2ts.core;
 
+import cyclops.control.*;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.*;
+
+import java.util.*;
+import java.util.stream.*;
 
 @SuppressWarnings("unused")
 @Component
@@ -13,13 +17,15 @@ public class Arguments
     private String pattern;
     @Value("${outputFolder:./target}")
     private String outputFolder;
-    @Value("${visitableName}")
+    @Value("${createVisitor:false}")
+    private boolean createVisitor;
+    @Value("${visitableName:}")
     private String visitableName;
-    @Value("${visitablePath}")
+    @Value("${visitablePath:}")
     private String visitablePath;
-    @Value("${visitorName}")
+    @Value("${visitorName:}")
     private String visitorName;
-    @Value("${visitorPath}")
+    @Value("${visitorPath:}")
     private String visitorPath;
     @Value("${domainFile}")
     private String domainFile;
@@ -29,4 +35,20 @@ public class Arguments
     private String uidPrefix;
     @Value("${threshold:0.8}")
     private double threshold;
+
+    public Either<List<String>, Boolean> isValid() {
+        var valid = true;
+        val messages = new ArrayList<String>();
+
+        if(createVisitor) {
+            val hasVisitable = Stream.of(this.visitableName, this.visitorName, this.visitorPath, this.visitablePath)
+                .allMatch(s -> s != null && !s.isEmpty());
+            if(!hasVisitable) {
+                valid = false;
+                messages.add("If createVisitor is true, visitor parameters should be not empty");
+            }
+        }
+
+        return valid ? Either.right(true) : Either.left(messages);
+    }
 }
