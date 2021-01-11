@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="8">
-      <item index="0" class="java.lang.String" itemvalue="javax.annotation.PostConstruct" />
-      <item index="1" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Around" />
-      <item index="2" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Aspect" />
-      <item index="3" class="java.lang.String" itemvalue="org.aspectj.lang.annotation.Before" />
-      <item index="4" class="java.lang.String" itemvalue="org.junit.BeforeClass" />
-      <item index="5" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="6" class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
-      <item index="7" class="java.lang.String" itemvalue="org.springframework.stereotype.Component" />
-    </list>
     <writeAnnotations>
       <writeAnnotation name="org.springframework.beans.factory.annotation.Autowired" />
       <writeAnnotation name="org.springframework.boot.test.mock.mockito.MockBean" />
-      <writeAnnotation name="com.beust.jcommander.Parameter" />
     </writeAnnotations>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
@@ -25,7 +14,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
