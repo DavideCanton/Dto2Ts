@@ -54,7 +54,8 @@ public class Main implements CommandLineRunner
     {
         arguments.isValid()
             .flatMap(__ ->
-                generator.generate()
+                this.createOutputFolderOrClean()
+                    .flatMapOrCatch(___ -> generator.generate(), Throwable.class)
                     .flatMapOrCatch(generator::splitTypeScriptClasses, Throwable.class)
                     .flatMapOrCatch(___ -> writeDomainFile(), Throwable.class)
                     .toEither()
@@ -62,6 +63,23 @@ public class Main implements CommandLineRunner
             )
             .peek(__ -> log.info("Finished!"))
             .peekLeft(s -> log.error("Error: {}", s));
+    }
+
+    private Try<Void, Throwable> createOutputFolderOrClean()
+    {
+        return Try.success(new File(arguments.getOutputFolder()))
+            .flatMapOrCatch(dir ->
+            {
+                if (dir.isDirectory())
+                    return Try.runWithCatch(() -> FileUtils.cleanDirectory(dir));
+                else if (!dir.exists())
+                {
+                    //noinspection ResultOfMethodCallIgnored
+                    return Try.runWithCatch(dir::mkdirs);
+                }
+                else
+                    return Try.failure(new Exception("There is already a file named as the output directory"));
+            });
     }
 
     @NotNull

@@ -59,32 +59,33 @@ public class ClassNameDecoratorExtension extends Extension
         List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
 
         transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
-            model.withBeans(getBeans(model)
-            ))
-        );
+            model.withBeans(getBeans(model))
+        ));
         return transformerDefinitions;
     }
 
     @NotNull
-    private List<TsBeanModel> getBeans(TsModel model) {
+    private List<TsBeanModel> getBeans(TsModel model)
+    {
         List<TsBeanModel> beans = model.getBeans().stream()
-                .map(ClassNameDecoratorExtension.this::decorateClass)
-                .collect(Collectors.toList());
+            .map(ClassNameDecoratorExtension.this::decorateClass)
+            .collect(Collectors.toList());
 
-        if(args.isCreateVisitor()) {
+        if (args.isCreateVisitor())
+        {
             beans.add(new TsBeanModel(null,
-                    TsBeanCategory.Data,
-                    false,
-                    new Symbol(Utils.getVisitorName(args.getVisitorName())),
-                    Collections.emptyList(),
-                    null,
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    null,
-                    visitorContext.getVisitedClasses().stream().map(this::buildVisitMethod).collect(Collectors.toList()),
-                    null)
-                    .withDecorators(buildClassDecorators()));
+                TsBeanCategory.Data,
+                false,
+                new Symbol(Utils.getVisitorName(args.getVisitorName())),
+                Collections.emptyList(),
+                null,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                null,
+                visitorContext.getVisitedClasses().stream().map(this::buildVisitMethod).collect(Collectors.toList()),
+                null)
+                .withDecorators(buildClassDecorators()));
         }
         return beans;
     }
@@ -95,18 +96,18 @@ public class ClassNameDecoratorExtension extends Extension
         String visitMethodName = "visit" + className;
 
         return new TsMethodModel(
-                visitMethodName,
-                TsModifierFlags.None,
-                Collections.emptyList(),
-                Collections.singletonList(
-                        new TsParameterModel(
-                                visitorVariableName,
-                                new TsType.BasicType(className)
-                        )
-                ),
-                TsType.Void,
-                null,
-                null
+            visitMethodName,
+            TsModifierFlags.None,
+            Collections.emptyList(),
+            Collections.singletonList(
+                new TsParameterModel(
+                    visitorVariableName,
+                    new TsType.BasicType(className)
+                )
+            ),
+            TsType.Void,
+            null,
+            null
         );
     }
 
@@ -116,6 +117,7 @@ public class ClassNameDecoratorExtension extends Extension
             return bean;
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
+
         registerDefaultImports(className);
         visitorContext.addClass(className);
 
@@ -159,9 +161,9 @@ public class ClassNameDecoratorExtension extends Extension
         {
             importHandler.registerExternalImport(className, args.getVisitableName(), args.getVisitablePath());
             importHandler.registerExternalImport(
-                    className,
-                    Utils.getVisitorName(args.getVisitorName()),
-                    Utils.getVisitorPath(args.getVisitablePath()));
+                className,
+                Utils.getVisitorName(args.getVisitorName()),
+                Utils.getVisitorPath(args.getVisitorName()));
         }
     }
 

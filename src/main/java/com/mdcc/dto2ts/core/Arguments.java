@@ -28,6 +28,8 @@ public class Arguments {
     private String domainFile;
     @Value("${domainPrefix:cod}")
     private String domainPrefix;
+    @Value("${domainFilePrefix:}")
+    private String domainFilePrefix;
     @Value("${uidPrefix:uid}")
     private String uidPrefix;
     @Value("${threshold:0.8}")

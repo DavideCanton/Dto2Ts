@@ -44,6 +44,7 @@ public class DomainHandler
                     .keySet()
                     .stream()
                     .map(Object::toString)
+                    .map(s -> s.replaceAll(String.format("^%s", arguments.getDomainFilePrefix()), ""))
                     .collect(Collectors.toList());
             },
             IOException.class
