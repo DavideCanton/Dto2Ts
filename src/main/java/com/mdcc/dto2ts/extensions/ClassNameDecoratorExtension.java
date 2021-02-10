@@ -6,7 +6,7 @@ import com.mdcc.dto2ts.decorators.*;
 import com.mdcc.dto2ts.imports.*;
 import com.mdcc.dto2ts.transformers.*;
 import com.mdcc.dto2ts.utils.*;
-import com.mdcc.dto2ts.visitor.VisitorContext;
+import com.mdcc.dto2ts.visitor.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
@@ -16,13 +16,12 @@ import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 
 import java.util.*;
 import java.util.stream.*;
 
-import static com.mdcc.dto2ts.imports.ImportNames.JSON_CLASS;
-import static com.mdcc.dto2ts.imports.ImportNames.SERIALIZE_FN;
+import static com.mdcc.dto2ts.imports.ImportNames.*;
 
 @Component
 public class ClassNameDecoratorExtension extends Extension
@@ -33,6 +32,8 @@ public class ClassNameDecoratorExtension extends Extension
     private Arguments args;
     @Autowired
     private VisitorContext visitorContext;
+    @Autowired
+    private ClassRenamer classRenamer;
 
     @Autowired
     @TransformAfterDecorate
@@ -57,7 +58,6 @@ public class ClassNameDecoratorExtension extends Extension
     public List<TransformerDefinition> getTransformers()
     {
         List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
-
         transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
             model.withBeans(getBeans(model))
         ));
@@ -119,7 +119,7 @@ public class ClassNameDecoratorExtension extends Extension
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
 
         registerDefaultImports(className);
-        visitorContext.addClass(className);
+        visitorContext.addClass(classRenamer.getName(bean));
 
         if (args.isCreateVisitor())
             implementVisitableInterface(bean);
@@ -138,7 +138,7 @@ public class ClassNameDecoratorExtension extends Extension
                     Stream.of(buildSerializeProperty())
                 ).collect(Collectors.toList())
             )
-            .withMethods(buildMethods(className));
+            .withMethods(buildMethods(bean));
     }
 
     private void implementVisitableInterface(TsBeanModel bean)
@@ -183,17 +183,17 @@ public class ClassNameDecoratorExtension extends Extension
     }
 
     @NotNull
-    private List<TsMethodModel> buildMethods(String className)
+    private List<TsMethodModel> buildMethods(TsBeanModel bean)
     {
         val list = new ArrayList<TsMethodModel>();
 
-        if (args.isCreateVisitor()) list.add(buildAcceptMethod(className));
+        if (args.isCreateVisitor()) list.add(buildAcceptMethod(bean));
 
         return list;
     }
 
     @NotNull
-    private TsMethodModel buildAcceptMethod(String className)
+    private TsMethodModel buildAcceptMethod(TsBeanModel bean)
     {
         String visitorVariableName = "visitor";
         String visitMethodName = "visit";
@@ -214,7 +214,7 @@ public class ClassNameDecoratorExtension extends Extension
                     new TsCallExpression(
                         new TsMemberExpression(
                             new TsIdentifierReference(visitorVariableName),
-                            visitMethodName + className
+                            visitMethodName + classRenamer.getName(bean)
                         ),
                         new TsThisExpression()
                     )

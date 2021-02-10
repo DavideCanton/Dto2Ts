@@ -14,7 +14,11 @@ import java.util.stream.*;
 public class Arguments {
     @Value("${pattern}")
     private String pattern;
-    @Value("${outputFolder:./target}")
+    @Value("${suffixToRemove:Model$}")
+    private String suffixToRemove;
+    @Value("${prefixToRemove:^(prs|api|srv|opr)[cdeh]}")
+    private String prefixToRemove;
+    @Value("${outputFolder:./target/generated-models}")
     private String outputFolder;
     @Value("${createVisitor:false}")
     private boolean createVisitor;

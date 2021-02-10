@@ -28,6 +28,8 @@ public class Dto2TsGenerator
     private ClassNameDecoratorExtension extension;
     @Autowired
     private ImportHandler importHandler;
+    @Autowired
+    private ClassRenamer classRenamer;
 
     private Input input;
     private TypeScriptGenerator generator;
@@ -50,27 +52,27 @@ public class Dto2TsGenerator
         String decorator = String.format("@%s\\(\\)", ImportNames.JSON_CLASS);
 
         return ReactiveSeq.fromStream(Stream.of(typeScriptClasses.trim().split(decorator)))
-                .map(s -> s.replace("[];", "[] = [];"))
-                .map(s -> Tuple2.of(s, pattern.matcher(s)))
-                .filter(t -> t._2().find())
-                .map(t -> t.map1(s -> "class".equals(t._2().group(1)) ? String.format("@%s()", ImportNames.JSON_CLASS) + s : s))
-                .reduce(
-                        Try.success(0),
-                        (first, current) ->
-                                first.flatMapOrCatch(n ->
-                                                createTypeScriptFile(current._1().trim(), current._2().group(1), current._2().group(2))
-                                                        .map(__ -> n + 1),
-                                        Throwable.class
-                                )
-                )
-                .filter(n -> n > 0, __ -> new IllegalStateException("Code not found"));
+            .map(s -> s.replace("[];", "[] = [];"))
+            .map(s -> Tuple2.of(s, pattern.matcher(s)))
+            .filter(t -> t._2().find())
+            .map(t -> t.map1(s -> "class".equals(t._2().group(1)) ? String.format("@%s()", ImportNames.JSON_CLASS) + s : s))
+            .reduce(
+                Try.success(0),
+                (first, current) ->
+                    first.flatMapOrCatch(n ->
+                            createTypeScriptFile(current._1().trim(), current._2().group(1), current._2().group(2))
+                                .map(__ -> n + 1),
+                        Throwable.class
+                    )
+            )
+            .filter(n -> n > 0, __ -> new IllegalStateException("Code not found"));
     }
 
     private Try<Boolean, Throwable> createTypeScriptFile(String code, String type, String className)
     {
         File file = new File(this.arguments.getOutputFolder(), "class".equals(type)
-                ? Utils.getClassName(className) + ".ts"
-                : arguments.getVisitorName() + ".visitor.ts");
+            ? Utils.getClassName(className) + ".ts"
+            : arguments.getVisitorName() + ".visitor.ts");
 
         String path = Try.withCatch(file::getCanonicalPath, IOException.class)
             .get()
@@ -129,6 +131,7 @@ public class Dto2TsGenerator
         settings.noFileComment = true;
         settings.noEslintDisable = true;
         settings.noTslintDisable = true;
+        settings.customTypeNamingFunctionImpl = classRenamer;
         settings.extensions.add(extension);
 
         return new TypeScriptGenerator(settings);
