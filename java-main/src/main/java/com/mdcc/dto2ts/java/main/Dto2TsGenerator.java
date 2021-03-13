@@ -1,8 +1,8 @@
-package com.mdcc.dto2ts.main;
+package com.mdcc.dto2ts.java.main;
 
 import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.utils.*;
-import com.mdcc.dto2ts.extensions.*;
+import com.mdcc.dto2ts.java.main.extensions.*;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;

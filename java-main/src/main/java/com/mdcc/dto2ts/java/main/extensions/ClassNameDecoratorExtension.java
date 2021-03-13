@@ -1,4 +1,4 @@
-package com.mdcc.dto2ts.extensions;
+package com.mdcc.dto2ts.java.main.extensions;
 
 import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.decorators.*;
@@ -6,7 +6,8 @@ import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.transformers.*;
 import com.mdcc.dto2ts.core.utils.*;
 import com.mdcc.dto2ts.core.visitor.*;
-import com.mdcc.dto2ts.main.*;
+import com.mdcc.dto2ts.java.main.*;
+import com.mdcc.dto2ts.java.main.factories.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
@@ -21,8 +22,7 @@ import org.springframework.util.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_CLASS;
-import static com.mdcc.dto2ts.core.imports.ImportNames.SERIALIZE_FN;
+import static com.mdcc.dto2ts.core.imports.ImportNames.*;
 
 @Component
 public class ClassNameDecoratorExtension extends Extension

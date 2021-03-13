@@ -1,4 +1,4 @@
-package com.mdcc.dto2ts.main;
+package com.mdcc.dto2ts.java.main;
 
 import com.mdcc.dto2ts.core.context.*;
 import cyclops.control.*;

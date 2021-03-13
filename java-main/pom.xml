@@ -43,7 +43,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.mdcc.dto2ts.Main</mainClass>
+                                    <mainClass>com.mdcc.dto2ts.java.main.Main</mainClass>
                                 </manifest>
                                 <manifestEntries>
                                     <Class-Path>.</Class-Path>

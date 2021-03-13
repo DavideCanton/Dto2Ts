@@ -1,7 +1,6 @@
-package com.mdcc.dto2ts;
+package com.mdcc.dto2ts.java.main;
 
 import com.mdcc.dto2ts.core.domains.*;
-import com.mdcc.dto2ts.main.*;
 import cyclops.control.*;
 import lombok.extern.slf4j.*;
 import lombok.*;
@@ -10,12 +9,16 @@ import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.context.annotation.*;
 
 import java.io.*;
 import java.util.*;
 
 @SpringBootApplication
 @Slf4j
+@ComponentScan(
+    basePackages = "com.mdcc.dto2ts"
+)
 public class Main implements CommandLineRunner
 {
     @Autowired
