@@ -15,22 +15,24 @@ public class PropertyContext
     @With
     private String className;
     @With
-    private PropertyModel propertyModel;
+    private PropertyRef propertyRef;
+    @With
+    private PropertyOperationsFactory propertyOperationsFactory;
     @With
     @Builder.Default
-    private List<DecoratorModel> decorators = new ArrayList<>();
+    private List<DecoratorRef> decorators = new LinkedList<>();
     @Builder.Default
     private Map<String, Object> extendedProperties = new HashMap<>();
 
-    public PropertyContext withTransformedProperty(Function<PropertyContext, PropertyModel> transformer)
+    public PropertyContext withTransformedProperty(BiFunction<PropertyOperationsFactory, PropertyRef, PropertyRef> transformer)
     {
         return this.copy()
-            .withPropertyModel(transformer.apply(this));
+            .withPropertyRef(transformer.apply(this.propertyOperationsFactory, this.propertyRef));
     }
 
-    public PropertyContext addDecorator(DecoratorModel decorator)
+    public PropertyContext addDecorator(DecoratorRef decorator)
     {
-        List<DecoratorModel> newDecorators = new ArrayList<>(this.getDecorators());
+        List<DecoratorRef> newDecorators = new ArrayList<>(this.getDecorators());
         newDecorators.add(decorator);
         return this.withDecorators(newDecorators);
     }
@@ -51,15 +53,16 @@ public class PropertyContext
     {
         return PropertyContext.builder()
             .className(this.className)
-            .propertyModel(this.propertyModel)
+            .propertyRef(this.propertyRef)
+            .propertyOperationsFactory(this.propertyOperationsFactory)
+            .decorators(this.decorators)
             .extendedProperties(new HashMap<>(this.extendedProperties))
-            .decorators(new ArrayList<>(this.decorators))
             .build();
     }
 
-    public PropertyModel getPropertyWithDecorators()
+    public Object getUnderlyingProperty()
     {
-        return propertyModel
-            .withDecorators(decorators);
+        return propertyOperationsFactory.createPropertyConstructor()
+            .buildPropertyWithDecorators(propertyRef, decorators);
     }
 }

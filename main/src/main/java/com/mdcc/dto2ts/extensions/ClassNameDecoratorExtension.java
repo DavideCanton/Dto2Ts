@@ -35,8 +35,6 @@ public class ClassNameDecoratorExtension extends Extension
     private VisitorContext visitorContext;
     @Autowired
     private ClassRenamer classRenamer;
-    @Autowired
-    private PropertyConverter converter;
 
     @Autowired
     @TransformAfterDecorate
@@ -138,8 +136,8 @@ public class ClassNameDecoratorExtension extends Extension
                         .map(c -> applyWhileNull(propertyDecorators, c))
                         .peek(c -> c.getDecorators().forEach(decorator -> putImport(decorator, c.getClassName())))
                         .map(c -> applyWhileNull(afterDecoratePropertyTransformers, c))
-                        .map(PropertyContext::getPropertyWithDecorators)
-                        .map(converter::toTsPropertyModel),
+                        .map(PropertyContext::getUnderlyingProperty)
+                        .map(TsPropertyModel.class::cast),
                     Stream.of(buildSerializeProperty())
                 ).collect(Collectors.toList())
             )
@@ -247,18 +245,22 @@ public class ClassNameDecoratorExtension extends Extension
     {
         return PropertyContext.builder()
             .className(className)
-            .propertyModel(converter.toPropertyModel(propertyModel))
+            .propertyRef(new TsPropertyRef(propertyModel))
+            .propertyOperationsFactory(new TsPropertyOperationsFactory())
             .build();
     }
 
-    private void putImport(DecoratorModel decorator, String simpleName)
+    private void putImport(DecoratorRef decorator, String simpleName)
     {
-        String decoratorName = decorator.getIdentifier();
+        TsDecorator castDecorator = ((TsDecoratorRef) decorator).getDecorator();
+        String decoratorName = castDecorator.getIdentifierReference().getIdentifier();
         importHandler.registerClassLibraryImport(simpleName, decoratorName);
 
-        decorator.getParameters()
+        castDecorator.getArguments()
             .stream()
             .findFirst()
+            .filter(a -> a instanceof TsIdentifierReference)
+            .map(a -> ((TsIdentifierReference) a).getIdentifier())
             .ifPresent(argument -> importHandler.registerOtherClassImport(simpleName, argument));
     }
 

@@ -1,7 +1,6 @@
 package com.mdcc.dto2ts.core.transformers;
 
 import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.context.types.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -20,16 +19,17 @@ public class AddNullablePropertyTransformer extends ConditionPropertyTransformer
         return context
             .getDecorators()
             .stream()
-            .map(DecoratorModel::getIdentifier)
-            .anyMatch(nullablePropertyDecorators::contains);
+            .anyMatch(d -> nullablePropertyDecorators.contains(context.getPropertyOperationsFactory()
+                .createInfoExtractor()
+                .getDecoratorIdentifier(d))
+            );
     }
 
     @Override
     protected PropertyContext doTransform(PropertyContext context)
     {
-        return context.withPropertyModel(
-            context.getPropertyModel()
-                .withTsType(new NullableType(context.getPropertyModel().getTsType()))
+        return context.withTransformedProperty(
+            (op, p) -> op.createPropertyRefTransformer().makeNullable(p)
         );
     }
 }

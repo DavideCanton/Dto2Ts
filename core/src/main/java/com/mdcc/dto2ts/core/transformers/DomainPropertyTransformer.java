@@ -1,7 +1,6 @@
 package com.mdcc.dto2ts.core.transformers;
 
 import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.context.types.*;
 import com.mdcc.dto2ts.core.domains.*;
 import com.mdcc.dto2ts.core.imports.*;
 import org.springframework.beans.factory.annotation.*;
@@ -26,13 +25,17 @@ public class DomainPropertyTransformer implements PropertyTransformer
     private ImportHandler importHandler;
 
 
-    private Optional<String> getDomain(PropertyModel property)
+    private Optional<String> getDomain(PropertyContext context)
     {
-        if (property.getTsType() instanceof BasicType &&
-            ((BasicType) property.getTsType()).isString() &&
-            property.getName().startsWith(args.getDomainPrefix()))
+        InfoExtractor infoExtractor = context.getPropertyOperationsFactory().createInfoExtractor();
+        PropertyTypeChecker propertyTypeChecker = context.getPropertyOperationsFactory().createPropertyTypeChecker();
+
+        String propertyName = infoExtractor.getPropertyName(context.getPropertyRef());
+
+        if (propertyTypeChecker.isString(context.getPropertyRef()) &&
+            propertyName.startsWith(args.getDomainPrefix()))
         {
-            return domainHandler.findDomain(property.getName().substring(args.getDomainPrefix().length()));
+            return domainHandler.findDomain(propertyName.substring(args.getDomainPrefix().length()));
         }
 
         return Optional.empty();
@@ -40,22 +43,19 @@ public class DomainPropertyTransformer implements PropertyTransformer
 
     public Optional<PropertyContext> transformProperty(PropertyContext context)
     {
-        return getDomain(context.getPropertyModel())
-            .map(domain -> context.withExtendedProperty(DOMAIN_KEY, domain))
-            .map(newContext -> {
+        return getDomain(context)
+            .map(domain -> {
+                PropertyContext newContext = buildProperty(
+                    context.withExtendedProperty(DOMAIN_KEY, domain)
+                );
                 registerImports(newContext);
-                newContext.setPropertyModel(buildProperty(newContext));
                 return newContext;
             });
     }
 
-    private PropertyModel buildProperty(PropertyContext context)
+    private PropertyContext buildProperty(PropertyContext context)
     {
-        return new PropertyModel(
-            new GenericBasicType(I_LOCALIZABLE_PROPERTY, BasicType.string()),
-            Collections.emptyList(),
-            context.getPropertyModel().getName()
-        );
+        return context.withTransformedProperty((pc, p) -> pc.createPropertyRefTransformer().makeDomain(p));
     }
 
     private void registerImports(PropertyContext info)
