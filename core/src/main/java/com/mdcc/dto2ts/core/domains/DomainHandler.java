@@ -15,11 +15,11 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
-@Getter
 @Component
 public class DomainHandler
 {
     private final StringSimilarity algorithm = new NormalizedLevenshtein();
+    @Getter
     private final Set<String> domainsUsed = new TreeSet<>();
     private List<String> domains = new ArrayList<>();
 
@@ -45,6 +45,7 @@ public class DomainHandler
                     .keySet()
                     .stream()
                     .map(Object::toString)
+                    .map(s -> s.replaceAll(String.format("^%s", arguments.getDomainFilePrefix()), ""))
                     .collect(Collectors.toList());
             },
             IOException.class

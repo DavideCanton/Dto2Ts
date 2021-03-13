@@ -21,6 +21,6 @@ public class UUIDPropertyTransformer extends ConditionPropertyTransformer
     @Override
     protected PropertyContext doTransform(PropertyContext context)
     {
-        return context.withTransformedProperty(c -> c.getPropertyModel().withTsType(new StringType()));
+        return context.withTransformedProperty(c -> c.getPropertyModel().withTsType(BasicType.string()));
     }
 }

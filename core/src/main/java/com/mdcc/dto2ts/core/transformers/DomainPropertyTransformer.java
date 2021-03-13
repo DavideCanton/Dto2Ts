@@ -28,7 +28,8 @@ public class DomainPropertyTransformer implements PropertyTransformer
 
     private Optional<String> getDomain(PropertyModel property)
     {
-        if (property.getTsType() instanceof StringType &&
+        if (property.getTsType() instanceof BasicType &&
+            ((BasicType) property.getTsType()).isString() &&
             property.getName().startsWith(args.getDomainPrefix()))
         {
             return domainHandler.findDomain(property.getName().substring(args.getDomainPrefix().length()));
@@ -51,7 +52,7 @@ public class DomainPropertyTransformer implements PropertyTransformer
     private PropertyModel buildProperty(PropertyContext context)
     {
         return new PropertyModel(
-            new GenericBasicType(I_LOCALIZABLE_PROPERTY, new StringType()),
+            new GenericBasicType(I_LOCALIZABLE_PROPERTY, BasicType.string()),
             Collections.emptyList(),
             context.getPropertyModel().getName()
         );

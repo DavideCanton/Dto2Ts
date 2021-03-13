@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.core.decorators;
 
 import com.mdcc.dto2ts.core.context.*;
+import com.mdcc.dto2ts.core.context.types.*;
 import com.mdcc.dto2ts.core.domains.*;
 import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.utils.*;
@@ -53,7 +54,7 @@ public class DomainDecorator implements PropertyDecorator
     private boolean isLocalizeProperty(PropertyContext context)
     {
         return Utils.isBasicType(context.getPropertyModel().getTsType())
-            && context.getPropertyModel().getTsType().getName().equals(ImportNames.I_LOCALIZABLE_PROPERTY);
+            && ((BasicType) context.getPropertyModel().getTsType()).getName().equals(ImportNames.I_LOCALIZABLE_PROPERTY);
     }
 
     private PropertyContext registerImports(PropertyContext info)

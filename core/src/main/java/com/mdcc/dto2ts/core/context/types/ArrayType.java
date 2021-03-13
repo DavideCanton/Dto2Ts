@@ -3,10 +3,12 @@ package com.mdcc.dto2ts.core.context.types;
 import lombok.*;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@With
-public class ArrayType extends TsType
+public class ArrayType implements TsType
 {
-    private TsType arrayElementType;
+    private final TsType arrayElementType;
+
+    public ArrayType(TsType arrayElementType)
+    {
+        this.arrayElementType = arrayElementType;
+    }
 }

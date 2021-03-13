@@ -18,15 +18,16 @@ public class SimpleDecorator implements PropertyDecorator
         return Optional.of(context.getPropertyModel())
             .filter(p -> Utils.isBasicType(p.getTsType()))
             .map(PropertyModel::getTsType)
+            .map(BasicType.class::cast)
             .flatMap(this::buildSimpleDecorator)
             .map(context::addDecorator);
     }
 
 
-    private Optional<DecoratorModel> buildSimpleDecorator(TsType t)
+    private Optional<DecoratorModel> buildSimpleDecorator(BasicType t)
     {
         return Optional.of(t)
-            .map(TsType::getName)
+            .map(BasicType::getName)
             .flatMap(type ->
             {
                 String ret = null;

@@ -1,4 +1,4 @@
-package test;
+package com.mdcc.dto2ts.core.test;
 
 import org.junit.*;
 import org.mockito.*;

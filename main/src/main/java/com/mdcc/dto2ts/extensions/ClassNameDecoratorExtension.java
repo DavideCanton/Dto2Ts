@@ -34,6 +34,8 @@ public class ClassNameDecoratorExtension extends Extension
     @Autowired
     private VisitorContext visitorContext;
     @Autowired
+    private ClassRenamer classRenamer;
+    @Autowired
     private PropertyConverter converter;
 
     @Autowired
@@ -119,8 +121,9 @@ public class ClassNameDecoratorExtension extends Extension
             return bean;
 
         String className = Utils.getClassNameFromTsQualifiedName(bean.getName().getSimpleName());
+
         registerDefaultImports(className);
-        visitorContext.addClass(className);
+        visitorContext.addClass(classRenamer.getName(bean));
 
         if (args.isCreateVisitor())
             implementVisitableInterface(bean);
@@ -140,9 +143,8 @@ public class ClassNameDecoratorExtension extends Extension
                     Stream.of(buildSerializeProperty())
                 ).collect(Collectors.toList())
             )
-            .withMethods(buildMethods(className));
+            .withMethods(buildMethods(bean));
     }
-
 
     private void implementVisitableInterface(TsBeanModel bean)
     {
@@ -166,7 +168,7 @@ public class ClassNameDecoratorExtension extends Extension
             importHandler.registerExternalImport(
                 className,
                 Utils.getVisitorName(args.getVisitorName()),
-                Utils.getVisitorPath(args.getVisitablePath()));
+                Utils.getVisitorPath(args.getVisitorName()));
         }
     }
 
@@ -186,17 +188,17 @@ public class ClassNameDecoratorExtension extends Extension
     }
 
     @NotNull
-    private List<TsMethodModel> buildMethods(String className)
+    private List<TsMethodModel> buildMethods(TsBeanModel bean)
     {
         val list = new ArrayList<TsMethodModel>();
 
-        if (args.isCreateVisitor()) list.add(buildAcceptMethod(className));
+        if (args.isCreateVisitor()) list.add(buildAcceptMethod(bean));
 
         return list;
     }
 
     @NotNull
-    private TsMethodModel buildAcceptMethod(String className)
+    private TsMethodModel buildAcceptMethod(TsBeanModel bean)
     {
         String visitorVariableName = "visitor";
         String visitMethodName = "visit";
@@ -217,7 +219,7 @@ public class ClassNameDecoratorExtension extends Extension
                     new TsCallExpression(
                         new TsMemberExpression(
                             new TsIdentifierReference(visitorVariableName),
-                            visitMethodName + className
+                            visitMethodName + classRenamer.getName(bean)
                         ),
                         new TsThisExpression()
                     )

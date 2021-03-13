@@ -12,3 +12,6 @@ buildNumber.properties
 */src/**/ext/
 .idea/sonarlint/
 .idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/misc.xml
+.idea/Dto2Ts.iml

@@ -1,15 +1,13 @@
-package test.transformers;
+package com.mdcc.dto2ts.core.test.transformers;
 
-import com.mdcc.dto2ts.context.*;
-import com.mdcc.dto2ts.test.*;
-import com.mdcc.dto2ts.transformers.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
+import com.mdcc.dto2ts.core.context.*;
+import com.mdcc.dto2ts.core.context.types.*;
+import com.mdcc.dto2ts.core.test.*;
+import com.mdcc.dto2ts.core.transformers.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.junit.*;
-import test.*;
 
 import java.util.*;
 
@@ -24,13 +22,10 @@ public class FlagPropertyTransformerTest extends BaseUnitTestClass
     @Test
     public void testShouldTransformCorrectly()
     {
-        TsPropertyModel property = new TsPropertyModel(
-            "flgproperty",
-            TsType.Number,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("flgproperty")
+            .tsType(BasicType.number())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")
@@ -41,22 +36,19 @@ public class FlagPropertyTransformerTest extends BaseUnitTestClass
 
         assertTrue(result.isPresent());
 
-        TsPropertyModel resultProperty = result.get().getPropertyModel();
+        PropertyModel resultProperty = result.get().getPropertyModel();
 
         assertEquals(property.getName(), resultProperty.getName());
-        assertEquals(TsType.Boolean, resultProperty.getTsType());
+        assertEquals(BasicType.bool(), resultProperty.getTsType());
     }
 
     @Test
     public void testShouldNotTransformIfNotStartingWithPrefix()
     {
-        TsPropertyModel property = new TsPropertyModel(
-            "property",
-            TsType.Number,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("property")
+            .tsType(BasicType.number())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")

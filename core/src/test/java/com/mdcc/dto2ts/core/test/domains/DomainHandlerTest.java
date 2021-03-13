@@ -1,13 +1,13 @@
-package test.domains;
+package com.mdcc.dto2ts.core.test.domains;
 
-import com.mdcc.dto2ts.domains.*;
-import com.mdcc.dto2ts.test.*;
+import com.mdcc.dto2ts.core.context.*;
+import com.mdcc.dto2ts.core.domains.*;
+import com.mdcc.dto2ts.core.test.*;
 import lombok.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.junit.*;
-import test.*;
 
 import java.util.*;
 
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class DomainHandlerTest extends BaseUnitTestClass
 {
     @Mock
-    private Arguments arguments;
+    private IArguments arguments;
 
     @InjectMocks
     private DomainHandler domainHandler;

@@ -1,21 +1,19 @@
-package test.transformers;
+package com.mdcc.dto2ts.core.test.transformers;
 
-import com.mdcc.dto2ts.context.*;
-import com.mdcc.dto2ts.domains.*;
-import com.mdcc.dto2ts.imports.*;
-import com.mdcc.dto2ts.test.*;
-import com.mdcc.dto2ts.transformers.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
+import com.mdcc.dto2ts.core.context.*;
+import com.mdcc.dto2ts.core.context.types.*;
+import com.mdcc.dto2ts.core.domains.*;
+import com.mdcc.dto2ts.core.imports.*;
+import com.mdcc.dto2ts.core.test.*;
+import com.mdcc.dto2ts.core.transformers.*;
 import org.junit.*;
 import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.junit.*;
-import test.*;
 
 import java.util.*;
 
-import static com.mdcc.dto2ts.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
+import static com.mdcc.dto2ts.core.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +27,7 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     private ImportHandler importHandler;
 
     @Mock
-    private Arguments arguments;
+    private IArguments arguments;
 
     @InjectMocks
     private DomainPropertyTransformer transformer;
@@ -46,13 +44,10 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
         String domain = "miotipo";
         when(domainHandler.findDomain(domain)).thenReturn(Optional.of(domain));
 
-        TsPropertyModel property = new TsPropertyModel(
-            "cod" + domain,
-            TsType.String,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("cod" + domain)
+            .tsType(BasicType.string())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")
@@ -63,11 +58,11 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
 
         assertTrue(result.isPresent());
 
-        TsPropertyModel resultProperty = result.get().getPropertyModel();
+        PropertyModel resultProperty = result.get().getPropertyModel();
 
         assertEquals(property.getName(), resultProperty.getName());
         assertEquals(
-            new TsType.GenericBasicType(I_LOCALIZABLE_PROPERTY, TsType.String),
+            new GenericBasicType(I_LOCALIZABLE_PROPERTY, BasicType.string()),
             resultProperty.getTsType()
         );
 
@@ -79,13 +74,10 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     {
         when(domainHandler.findDomain("miotipo")).thenReturn(Optional.empty());
 
-        TsPropertyModel property = new TsPropertyModel(
-            "codmiotipo",
-            TsType.String,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("codmiotipo")
+            .tsType(BasicType.string())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")
@@ -103,13 +95,10 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     @Test
     public void testShouldNotTransformIfNotString()
     {
-        TsPropertyModel property = new TsPropertyModel(
-            "codmiotipo",
-            TsType.Number,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("codmiotipo")
+            .tsType(BasicType.number())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")
@@ -127,13 +116,10 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     @Test
     public void testShouldNotTransformIfNotStartingWithPrefix()
     {
-        TsPropertyModel property = new TsPropertyModel(
-            "desmiotipo",
-            TsType.String,
-            TsModifierFlags.None,
-            true,
-            null
-        );
+        PropertyModel property = PropertyModel.builder()
+            .name("desmiotipo")
+            .tsType(BasicType.string())
+            .build();
 
         PropertyContext ctx = PropertyContext.builder()
             .className("className")

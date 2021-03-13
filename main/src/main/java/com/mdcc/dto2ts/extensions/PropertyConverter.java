@@ -38,6 +38,19 @@ public class PropertyConverter
 
     private TsType convert(cz.habarta.typescript.generator.TsType tsType)
     {
+        if (tsType.equals(cz.habarta.typescript.generator.TsType.BasicType.String))
+            return BasicType.string();
+        if (tsType.equals(cz.habarta.typescript.generator.TsType.BasicType.Number))
+            return BasicType.number();
+        if (tsType.equals(cz.habarta.typescript.generator.TsType.BasicType.Boolean))
+            return BasicType.bool();
+        if (tsType.equals(cz.habarta.typescript.generator.TsType.BasicType.Date))
+            return BasicType.date();
+        if (tsType instanceof cz.habarta.typescript.generator.TsType.BasicArrayType)
+        {
+            cz.habarta.typescript.generator.TsType.BasicArrayType a = (cz.habarta.typescript.generator.TsType.BasicArrayType) tsType;
+            return new ArrayType(this.convert(a.elementType));
+        }
         return null;
     }
 

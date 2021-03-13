@@ -16,7 +16,11 @@ public class Arguments implements IArguments
 {
     @Value("${pattern}")
     private String pattern;
-    @Value("${outputFolder:./target}")
+    @Value("${suffixToRemove:Model$}")
+    private String suffixToRemove;
+    @Value("${prefixToRemove:^(prs|api|srv|opr)[cdeh]}")
+    private String prefixToRemove;
+    @Value("${outputFolder:./target/generated-models}")
     private String outputFolder;
     @Value("${createVisitor:false}")
     private boolean createVisitor;
@@ -30,6 +34,8 @@ public class Arguments implements IArguments
     private String domainFile;
     @Value("${domainPrefix:cod}")
     private String domainPrefix;
+    @Value("${domainFilePrefix:}")
+    private String domainFilePrefix;
     @Value("${uidPrefix:uid}")
     private String uidPrefix;
     @Value("${threshold:0.8}")

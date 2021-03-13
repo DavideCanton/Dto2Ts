@@ -6,7 +6,6 @@ import java.util.*;
 
 @Getter
 @Setter
-@With
 public class GenericBasicType extends BasicType
 {
     private List<TsType> genericTypes = new ArrayList<>();
@@ -26,5 +25,20 @@ public class GenericBasicType extends BasicType
     {
         this(name);
         this.genericTypes.addAll(types);
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof GenericBasicType)) return false;
+        GenericBasicType that = (GenericBasicType) o;
+        return genericTypes.equals(that.genericTypes);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(super.hashCode(), genericTypes);
     }
 }

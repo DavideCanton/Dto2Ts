@@ -18,6 +18,6 @@ public class FlagPropertyTransformer extends ConditionPropertyTransformer
     @Override
     public PropertyContext doTransform(PropertyContext context)
     {
-        return context.withTransformedProperty(c -> c.getPropertyModel().withTsType(new BooleanType()));
+        return context.withTransformedProperty(c -> c.getPropertyModel().withTsType(BasicType.bool()));
     }
 }

@@ -28,6 +28,8 @@ public class Dto2TsGenerator
     private ClassNameDecoratorExtension extension;
     @Autowired
     private ImportHandler importHandler;
+    @Autowired
+    private ClassRenamer classRenamer;
 
     private Input input;
     private TypeScriptGenerator generator;
@@ -129,6 +131,7 @@ public class Dto2TsGenerator
         settings.noFileComment = true;
         settings.noEslintDisable = true;
         settings.noTslintDisable = true;
+        settings.customTypeNamingFunctionImpl = classRenamer;
         settings.extensions.add(extension);
 
         return new TypeScriptGenerator(settings);
