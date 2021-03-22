@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="Java Main" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.mdcc.dto2ts.java.main.Main" />
     <module name="java-main" />
     <option name="PROGRAM_PARAMETERS" value="--pattern=&quot;com.maccarons.prova.dto.*&quot; --createVisitor=&quot;true&quot; --visitableName=&quot;IVisitable&quot; --visitablePath=&quot;./visitable&quot; --visitorName=&quot;my&quot; --domainFile=&quot;src\main\java\com\maccarons\prova\dto\domains.properties&quot; --domainFilePrefix=&quot;gni.&quot;" />

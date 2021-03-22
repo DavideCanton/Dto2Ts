@@ -1,5 +1,6 @@
-package com.mdcc.dto2ts.java.main;
+package com.mdcc.dto2ts.java.common;
 
+import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.utils.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.compiler.*;

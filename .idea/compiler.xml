@@ -7,7 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="java-ts-common" />
         <module name="core" />
+        <module name="json-main" />
         <module name="java-main" />
       </profile>
     </annotationProcessing>
@@ -17,6 +19,8 @@
       <module name="core" options="-parameters" />
       <module name="dto2ts" options="" />
       <module name="java-main" options="-parameters" />
+      <module name="java-ts-common" options="-parameters" />
+      <module name="json-main" options="-parameters" />
     </option>
   </component>
 </project>

@@ -16,7 +16,7 @@ import static com.mdcc.dto2ts.core.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
 public class DomainPropertyTransformer implements PropertyTransformer
 {
     @Autowired
-    private IArguments args;
+    private Arguments args;
 
     @Autowired
     private DomainHandler domainHandler;

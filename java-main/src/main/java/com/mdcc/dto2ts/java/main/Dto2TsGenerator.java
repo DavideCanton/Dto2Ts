@@ -1,8 +1,9 @@
 package com.mdcc.dto2ts.java.main;
 
+import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.utils.*;
-import com.mdcc.dto2ts.java.main.extensions.*;
+import com.mdcc.dto2ts.java.common.*;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
@@ -25,11 +26,11 @@ public class Dto2TsGenerator
     @Autowired
     private Arguments arguments;
     @Autowired
-    private ClassNameDecoratorExtension extension;
-    @Autowired
     private ImportHandler importHandler;
     @Autowired
     private ClassRenamer classRenamer;
+    @Autowired
+    private Settings settings;
 
     private Input input;
     private TypeScriptGenerator generator;
@@ -122,17 +123,6 @@ public class Dto2TsGenerator
     @NotNull
     private TypeScriptGenerator buildGenerator()
     {
-        Settings settings = new Settings();
-        settings.jsonLibrary = JsonLibrary.jackson2;
-        settings.outputKind = TypeScriptOutputKind.module;
-        settings.mapClasses = ClassMapping.asClasses;
-        settings.outputFileType = TypeScriptFileType.implementationFile;
-        settings.mapEnum = EnumMapping.asEnum;
-        settings.noFileComment = true;
-        settings.noEslintDisable = true;
-        settings.noTslintDisable = true;
-        settings.customTypeNamingFunctionImpl = classRenamer;
-        settings.extensions.add(extension);
 
         return new TypeScriptGenerator(settings);
     }

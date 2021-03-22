@@ -1,15 +1,11 @@
 package com.mdcc.dto2ts.java.main.extensions;
 
 import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.decorators.*;
 import com.mdcc.dto2ts.core.imports.*;
-import com.mdcc.dto2ts.core.transformers.*;
 import com.mdcc.dto2ts.core.utils.*;
 import com.mdcc.dto2ts.core.visitor.*;
-import com.mdcc.dto2ts.java.main.*;
+import com.mdcc.dto2ts.java.common.*;
 import com.mdcc.dto2ts.java.main.factories.*;
-import cyclops.data.tuple.*;
-import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
@@ -25,6 +21,7 @@ import java.util.stream.*;
 import static com.mdcc.dto2ts.core.imports.ImportNames.*;
 
 @Component
+@TsExtension
 public class ClassNameDecoratorExtension extends Extension
 {
     @Autowired
@@ -35,17 +32,8 @@ public class ClassNameDecoratorExtension extends Extension
     private VisitorContext visitorContext;
     @Autowired
     private ClassRenamer classRenamer;
-
     @Autowired
-    @TransformAfterDecorate
-    private List<PropertyTransformer> afterDecoratePropertyTransformers;
-
-    @Autowired
-    @TransformBeforeDecorate
-    private List<PropertyTransformer> beforeDecoratePropertyTransformers;
-
-    @Autowired
-    private List<PropertyDecorator> propertyDecorators;
+    private TsPropertyTransformationExecutor transformationExecutor;
 
     @Override
     public EmitterExtensionFeatures getFeatures()
@@ -130,17 +118,14 @@ public class ClassNameDecoratorExtension extends Extension
             .withDecorators(buildClassDecorators())
             .withProperties(
                 Stream.concat(
-                    bean.getProperties().stream()
-                        .map(p -> buildPropertyContext(p, className))
-                        .map(c -> applyWhileNull(beforeDecoratePropertyTransformers, c))
-                        .map(c -> applyWhileNull(propertyDecorators, c))
-                        .peek(c -> c.getDecorators().forEach(decorator -> putImport(decorator, c.getClassName())))
-                        .map(c -> applyWhileNull(afterDecoratePropertyTransformers, c))
-                        .map(PropertyContext::getUnderlyingProperty)
-                        .map(TsPropertyModel.class::cast),
+                    transformationExecutor.transformProperties(
+                        bean.getProperties(),
+                        new TransformationExecutorContext(className)
+                    ).stream(),
                     Stream.of(buildSerializeProperty())
                 ).collect(Collectors.toList())
             )
+            //.peek(c -> c.getDecorators().forEach(decorator -> putImport(decorator, c.getClassName())))
             .withMethods(buildMethods(bean));
     }
 
@@ -225,29 +210,6 @@ public class ClassNameDecoratorExtension extends Extension
             ),
             null
         );
-    }
-
-    private <T extends ContextTransformer> PropertyContext applyWhileNull(List<T> list, PropertyContext startingValue)
-    {
-        return ReactiveSeq.fromList(list)
-            .reduce(
-                Tuple2.of(false, startingValue),
-                (acc, t) -> Boolean.TRUE.equals(acc._1()) ? acc : (
-                    t.transformContext(startingValue)
-                        .map(c -> Tuple2.of(true, c))
-                        .orElse(acc)
-                )
-            )
-            ._2();
-    }
-
-    private PropertyContext buildPropertyContext(TsPropertyModel propertyModel, String className)
-    {
-        return PropertyContext.builder()
-            .className(className)
-            .propertyRef(new TsPropertyRef(propertyModel))
-            .propertyOperationsFactory(new TsPropertyOperationsFactory())
-            .build();
     }
 
     private void putImport(DecoratorRef decorator, String simpleName)

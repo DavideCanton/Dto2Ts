@@ -9,7 +9,7 @@ import org.springframework.stereotype.*;
 public class UUIDPropertyTransformer extends ConditionPropertyTransformer
 {
     @Autowired
-    private IArguments arguments;
+    private Arguments arguments;
 
     @Override
     public boolean canTransform(PropertyContext context)

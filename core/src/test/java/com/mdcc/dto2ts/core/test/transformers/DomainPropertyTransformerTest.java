@@ -26,7 +26,7 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     private ImportHandler importHandler;
 
     @Mock
-    private IArguments arguments;
+    private Arguments arguments;
 
     @InjectMocks
     private DomainPropertyTransformer transformer;

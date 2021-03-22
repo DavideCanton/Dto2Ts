@@ -1,6 +1,5 @@
-package com.mdcc.dto2ts.java.main;
+package com.mdcc.dto2ts.json.main;
 
-import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.domains.*;
 import cyclops.control.*;
 import lombok.extern.slf4j.*;
@@ -23,11 +22,11 @@ import java.util.*;
 public class Main implements CommandLineRunner
 {
     @Autowired
-    private Dto2TsGenerator generator;
-    @Autowired
-    private Arguments arguments;
+    private JsonArguments arguments;
     @Autowired
     private DomainHandler domainHandler;
+    @Autowired
+    private MainHandler mainHandler;
 
     public static void main(String[] args)
     {
@@ -59,9 +58,8 @@ public class Main implements CommandLineRunner
         arguments.isValid()
             .flatMap(__ ->
                 this.createOutputFolderOrClean()
-                    .flatMapOrCatch(___ -> generator.generate(), Throwable.class)
-                    .flatMapOrCatch(generator::splitTypeScriptClasses, Throwable.class)
-                    .flatMapOrCatch(___ -> writeDomainFile(), Throwable.class)
+                    .flatMapOrCatch(___ -> this.mainHandler.generate())
+                    .flatMapOrCatch(___ -> writeDomainFile())
                     .toEither()
                     .mapLeft(t -> Collections.singletonList(getFullStackTrace(t)))
             )

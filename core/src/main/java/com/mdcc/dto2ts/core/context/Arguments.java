@@ -1,18 +1,17 @@
-package com.mdcc.dto2ts.java.main;
+package com.mdcc.dto2ts.core.context;
 
-import com.mdcc.dto2ts.core.context.*;
 import cyclops.control.*;
 import lombok.*;
+import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.*;
 
 import java.util.*;
 import java.util.stream.*;
 
-@SuppressWarnings("unused")
-@Component
 @Getter
-public class Arguments implements IArguments
+@Component
+public class Arguments
 {
     @Value("${pattern}")
     private String pattern;
@@ -57,6 +56,12 @@ public class Arguments implements IArguments
             }
         }
 
+        return validationResultToEither(valid, messages);
+    }
+
+    @NotNull
+    protected Either<List<String>, Boolean> validationResultToEither(boolean valid, List<String> messages)
+    {
         return valid ? Either.right(true) : Either.left(messages);
     }
 }

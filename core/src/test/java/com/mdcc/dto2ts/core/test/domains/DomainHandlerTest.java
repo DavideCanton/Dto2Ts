@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class DomainHandlerTest extends BaseUnitTestClass
 {
     @Mock
-    private IArguments arguments;
+    private Arguments arguments;
 
     @InjectMocks
     private DomainHandler domainHandler;

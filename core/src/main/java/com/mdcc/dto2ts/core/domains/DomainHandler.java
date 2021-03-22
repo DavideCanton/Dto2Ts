@@ -24,7 +24,7 @@ public class DomainHandler
     private List<String> domains = new ArrayList<>();
 
     @Autowired
-    private IArguments arguments;
+    private Arguments arguments;
 
     @PostConstruct
     public void init() throws IOException
