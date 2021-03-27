@@ -4,10 +4,11 @@ import cyclops.control.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
 import cz.habarta.typescript.generator.emitter.*;
+import io.swagger.models.*;
+import io.swagger.parser.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import java.io.*;
 import java.util.*;
 
 @Component
@@ -20,25 +21,8 @@ public class MainHandler
 
     public Try<Void, Throwable> generate()
     {
-        Emitter emitter = new Emitter(settings);
-
-        return Try.withResources(
-            () -> new PrintWriter(new FileWriter(arguments.getOutputFolder() + "/" + "xxx.ts")),
-            writer -> {
-                TsModel model = new TsModel()
-                    .withBeans(Collections.singletonList(createFakeBean()));
-
-                emitter.emit(
-                    model,
-                    writer,
-                    "aaa",
-                    true,
-                    true,
-                    0
-                );
-                return null;
-            }
-        );
+        Swagger swagger = new SwaggerParser().read(arguments.getJson());
+        return Try.success(null);
     }
 
     private TsBeanModel createFakeBean()
