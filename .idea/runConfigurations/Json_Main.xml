@@ -2,14 +2,8 @@
   <configuration default="false" name="Json Main" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.mdcc.dto2ts.json.main.Main" />
     <module name="json-main" />
-    <option name="PROGRAM_PARAMETERS" value="--pattern=&quot;com.maccarons.prova.dto.*&quot; --createVisitor=&quot;true&quot; --visitableName=&quot;IVisitable&quot; --visitablePath=&quot;./visitable&quot; --visitorName=&quot;my&quot; --domainFile=&quot;src\main\java\com\maccarons\prova\dto\domains.properties&quot; --domainFilePrefix=&quot;gni.&quot; --json=&quot;abc&quot;" />
+    <option name="PROGRAM_PARAMETERS" value="--pattern=&quot;com.maccarons.prova.dto.*&quot; --createVisitor=&quot;true&quot; --visitableName=&quot;IVisitable&quot; --visitablePath=&quot;./visitable&quot; --visitorName=&quot;my&quot; --domainFile=&quot;src\main\java\com\maccarons\prova\dto\domains.properties&quot; --domainFilePrefix=&quot;gni.&quot; --json=&quot;src\main\resources\swagger.json&quot; --rootModel=&quot;ApieEstimationUnitsModel&quot;" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/json-main" />
-    <extension name="coverage">
-      <pattern>
-        <option name="PATTERN" value="org.example.main.*" />
-        <option name="ENABLED" value="true" />
-      </pattern>
-    </extension>
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

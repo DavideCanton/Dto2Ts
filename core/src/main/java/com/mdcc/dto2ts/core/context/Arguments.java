@@ -17,7 +17,7 @@ public class Arguments
     private String pattern;
     @Value("${suffixToRemove:Model$}")
     private String suffixToRemove;
-    @Value("${prefixToRemove:^(prs|api|srv|opr)[cdeh]}")
+    @Value("${prefixToRemove:^(prs|api|srv|opr).}")
     private String prefixToRemove;
     @Value("${outputFolder:./target/generated-models}")
     private String outputFolder;

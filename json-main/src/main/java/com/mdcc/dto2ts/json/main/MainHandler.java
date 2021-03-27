@@ -1,68 +1,45 @@
 package com.mdcc.dto2ts.json.main;
 
 import cyclops.control.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
-import cz.habarta.typescript.generator.emitter.*;
+import cyclops.reactive.*;
 import io.swagger.models.*;
 import io.swagger.parser.*;
+import lombok.extern.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import java.util.*;
-
 @Component
+@Slf4j
 public class MainHandler
 {
     @Autowired
     private JsonArguments arguments;
     @Autowired
-    private Settings settings;
+    private ModelCrawler crawler;
+    @Autowired
+    private ModelEmitter emitter;
 
     public Try<Void, Throwable> generate()
     {
-        Swagger swagger = new SwaggerParser().read(arguments.getJson());
-        return Try.success(null);
+        return Try.<Swagger, Throwable>withCatch(() -> new SwaggerParser().read(arguments.getJson()))
+            .mapOrCatch(swagger -> {
+                if (swagger == null)
+                {
+                    String message = "Swagger file not found at " + arguments.getJson();
+                    log.error(message);
+                    throw new IllegalArgumentException(message);
+                }
+
+                return crawler.generateModels(swagger);
+            })
+            .flatMapOrCatch(beans ->
+                ReactiveSeq.fromIterable(beans.values())
+                    .reduce(
+                        Try.success(null),
+                        (cur, bean) -> cur.flatMapOrCatch(__ -> emitter.writeModel(bean))
+                    )
+            );
     }
 
-    private TsBeanModel createFakeBean()
-    {
-        return new TsBeanModel(
-            TsBeanModel.class,
-            null,
-            true,
-            new Symbol("MySymbol"),
-            Collections.emptyList(),
-            null,
-            Collections.emptyList(),
-            Collections.emptyList(),
-            Collections.singletonList(createFakeProperty()),
-            null,
-            Collections.emptyList(),
-            null
-        ).withDecorators(
-            Collections.singletonList(createFakeDecorator())
-        );
-    }
-
-    private TsPropertyModel createFakeProperty()
-    {
-        return new TsPropertyModel(
-            "property",
-            TsType.BasicType.String,
-            Collections.singletonList(createFakeDecorator()),
-            TsModifierFlags.None,
-            true,
-            null
-        );
-    }
-
-    private TsDecorator createFakeDecorator()
-    {
-        return new TsDecorator(
-            new TsIdentifierReference("abc"),
-            null
-        );
-    }
 
 }
