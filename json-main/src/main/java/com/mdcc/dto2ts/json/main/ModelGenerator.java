@@ -1,6 +1,5 @@
 package com.mdcc.dto2ts.json.main;
 
-import com.mdcc.dto2ts.core.utils.*;
 import com.mdcc.dto2ts.java.common.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.compiler.*;
@@ -56,46 +55,45 @@ public class ModelGenerator
     {
         return properties.entrySet()
             .stream()
-            .flatMap(e -> StreamUtils.toStream(createProperty(e.getKey(), e.getValue())))
+            .map(e -> createProperty(e.getKey(), e.getValue()))
             .collect(Collectors.toList());
     }
 
-    private Optional<TsPropertyModel> createProperty(String name, Property property)
+    private TsPropertyModel createProperty(String name, Property property)
     {
-        return getType(property)
-            .map(type -> new TsPropertyModel(
-                name,
-                type,
-                new LinkedList<>(),
-                TsModifierFlags.None,
-                true,
+        val type = getType(property);
+        return new TsPropertyModel(
+            name,
+            type,
+            new LinkedList<>(),
+            TsModifierFlags.None,
+            true,
+            type.equals(TsType.Any) ?
+                Collections.singletonList("untraslated type: " + property.getType()) :
                 null
-            ));
+        );
     }
 
-    private Optional<TsType> getType(Property p)
+    private TsType getType(Property p)
     {
         if (p instanceof ArrayProperty)
-            return getType(((ArrayProperty) p).getItems())
-                .map(TsType.BasicArrayType::new);
+            return new TsType.BasicArrayType(getType(((ArrayProperty) p).getItems()));
         else if (p instanceof RefProperty)
-            return Optional.of(new TsType.ReferenceType(new Symbol(((RefProperty) p).getSimpleRef())));
+            return new TsType.ReferenceType(new Symbol(((RefProperty) p).getSimpleRef()));
         else
         {
             switch (p.getType())
             {
                 case "string":
-                    return Optional.of(
-                        "date-time".equals(p.getFormat()) ?
-                            TsType.BasicType.Date :
-                            TsType.BasicType.String
-                    );
+                    return "date-time".equals(p.getFormat()) ?
+                        TsType.BasicType.Date :
+                        TsType.BasicType.String;
                 case "number":
                 case "integer":
-                    return Optional.of(TsType.BasicType.Number);
+                    return TsType.BasicType.Number;
             }
         }
-        return Optional.empty();
+        return TsType.Any;
     }
 
     private TsType transformNullability(TsType tsType)
