@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.json.main;
 
 import com.google.common.base.*;
+import com.mdcc.dto2ts.core.utils.*;
 import cyclops.control.*;
 import cz.habarta.typescript.generator.emitter.*;
 import lombok.extern.slf4j.*;
@@ -18,10 +19,15 @@ public class ModelEmitter
     private JsonArguments arguments;
     @Autowired
     private Emitter emitter;
+    @Autowired
+    private CodeWriteUtils codeWriteUtils;
 
     public Try<Void, Throwable> writeModel(TsBeanModel bean)
     {
-        String fileName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, bean.getName().getSimpleName()) + ".model.ts";
+        String fileName =
+            bean.isClass() ?
+                CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, bean.getName().getSimpleName()) + ".model.ts" :
+                arguments.getVisitorName() + ".visitor.ts";
 
         return Try.withResources(
             () -> new PrintWriter(new FileWriter(arguments.getOutputFolder() + "/" + fileName)),
@@ -31,14 +37,21 @@ public class ModelEmitter
 
                 log.info("Writing file " + fileName);
 
+                StringWriter sw = new StringWriter();
+
+                String imports = codeWriteUtils.generateClassImport(bean.getName().getSimpleName());
+                sw.write(imports);
+
                 emitter.emit(
                     model,
-                    writer,
+                    sw,
                     null,
                     true,
                     true,
                     0
                 );
+
+                writer.println(codeWriteUtils.setDefaultForArrays(sw.toString()));
 
                 return null;
             }

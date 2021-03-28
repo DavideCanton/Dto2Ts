@@ -1,4 +1,4 @@
-package com.mdcc.dto2ts.java.main.extensions;
+package com.mdcc.dto2ts.java.common.factories;
 
 import lombok.*;
 

@@ -28,6 +28,7 @@ public class SettingsConfiguration
         settings.noFileComment = true;
         settings.noEslintDisable = true;
         settings.noTslintDisable = true;
+        settings.nullabilityDefinition = NullabilityDefinition.nullInlineUnion;
         settings.customTypeNamingFunctionImpl = classRenamer;
         this.extensionList.ifPresent(settings.extensions::addAll);
         return settings;

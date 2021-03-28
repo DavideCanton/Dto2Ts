@@ -1,7 +1,6 @@
-package com.mdcc.dto2ts.java.main.extensions;
+package com.mdcc.dto2ts.java.common.factories;
 
 import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.java.main.factories.*;
 import cz.habarta.typescript.generator.emitter.*;
 import org.springframework.stereotype.*;
 
@@ -22,5 +21,12 @@ public class TsPropertyTransformationExecutor extends DefaultPropertyTransformat
     protected TsPropertyModel unwrapContext(PropertyContext property)
     {
         return (TsPropertyModel) property.getUnderlyingProperty();
+    }
+
+    @Override
+    public TransformationExecutorContext createContext(Object... params)
+    {
+        String className = (String) params[0];
+        return new TransformationExecutorContext(className);
     }
 }

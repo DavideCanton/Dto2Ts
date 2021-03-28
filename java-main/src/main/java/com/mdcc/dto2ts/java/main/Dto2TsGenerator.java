@@ -31,6 +31,8 @@ public class Dto2TsGenerator
     private ClassRenamer classRenamer;
     @Autowired
     private Settings settings;
+    @Autowired
+    private CodeWriteUtils codeWriteUtils;
 
     private Input input;
     private TypeScriptGenerator generator;
@@ -53,7 +55,7 @@ public class Dto2TsGenerator
         String decorator = String.format("@%s\\(\\)", ImportNames.JSON_CLASS);
 
         return ReactiveSeq.fromStream(Stream.of(typeScriptClasses.trim().split(decorator)))
-            .map(s -> s.replace("[];", "[] = [];"))
+            .map(codeWriteUtils::setDefaultForArrays)
             .map(s -> Tuple2.of(s, pattern.matcher(s)))
             .filter(t -> t._2().find())
             .map(t -> t.map1(s -> "class".equals(t._2().group(1)) ? String.format("@%s()", ImportNames.JSON_CLASS) + s : s))
@@ -90,26 +92,11 @@ public class Dto2TsGenerator
 
     private boolean writeFile(String code, String className, PrintWriter pw)
     {
-        String imports = generateClassImport(className);
+        String imports = codeWriteUtils.generateClassImport(className);
         pw.print(imports);
         pw.println();
         pw.print(code);
         return true;
-    }
-
-    private String generateClassImport(String className)
-    {
-        return importHandler
-            .getImportsFor(className)
-            .reduce(
-                new StringBuilder(),
-                (sb, tuple) -> sb.append(String.format(
-                    "import { %s } from '%s';%n",
-                    String.join(", ", tuple._2()),
-                    tuple._1()
-                ))
-            )
-            .toString();
     }
 
     @NotNull

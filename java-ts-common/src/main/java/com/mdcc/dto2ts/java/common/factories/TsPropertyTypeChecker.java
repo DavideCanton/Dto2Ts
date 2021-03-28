@@ -1,9 +1,9 @@
-package com.mdcc.dto2ts.java.main.factories;
+package com.mdcc.dto2ts.java.common.factories;
 
 import com.mdcc.dto2ts.core.context.*;
 import cz.habarta.typescript.generator.*;
 
-import static com.mdcc.dto2ts.java.main.factories.TsPropertyOperationsFactory.*;
+import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.*;
 
 public class TsPropertyTypeChecker implements PropertyTypeChecker
 {

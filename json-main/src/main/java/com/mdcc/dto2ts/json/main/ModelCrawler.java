@@ -1,10 +1,11 @@
 package com.mdcc.dto2ts.json.main;
 
+import com.mdcc.dto2ts.java.common.*;
 import cz.habarta.typescript.generator.emitter.*;
 import io.swagger.models.*;
 import io.swagger.models.properties.*;
-import lombok.*;
 import lombok.extern.slf4j.*;
+import lombok.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -18,6 +19,8 @@ public class ModelCrawler
     private JsonArguments arguments;
     @Autowired
     private ModelGenerator generator;
+    @Autowired
+    private CodeDecorationUtils codeDecorationUtils;
 
     public Map<String, TsBeanModel> generateModels(Swagger swagger)
     {
@@ -38,6 +41,12 @@ public class ModelCrawler
         }
 
         visitAndCreateModels(modelsToVisit, generatedBeans, definitions);
+
+        if (arguments.isCreateVisitor())
+        {
+            val visitorBean = codeDecorationUtils.createVisitorBean();
+            generatedBeans.put(visitorBean.getName().getSimpleName(), visitorBean);
+        }
 
         return generatedBeans;
     }

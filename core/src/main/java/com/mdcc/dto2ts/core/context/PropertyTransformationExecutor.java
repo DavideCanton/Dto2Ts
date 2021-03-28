@@ -5,4 +5,6 @@ import java.util.*;
 public interface PropertyTransformationExecutor<P, C>
 {
     List<P> transformProperties(List<P> properties, C context);
+
+    C createContext(Object... params);
 }
