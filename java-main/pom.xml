@@ -11,6 +11,10 @@
 
     <artifactId>java-main</artifactId>
 
+    <properties>
+        <start-class>com.mdcc.dto2ts.java.main.Main</start-class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cz.habarta.typescript-generator</groupId>
@@ -33,29 +37,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-5</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>${start-class}</mainClass>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>create-my-bundle</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>repackage</goal>
                         </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <archive>
-                                <manifest>
-                                    <mainClass>com.mdcc.dto2ts.java.main.Main</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Class-Path>.</Class-Path>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
