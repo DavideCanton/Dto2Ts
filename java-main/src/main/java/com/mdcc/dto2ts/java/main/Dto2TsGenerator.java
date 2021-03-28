@@ -1,21 +1,16 @@
 package com.mdcc.dto2ts.java.main;
 
-import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.utils.*;
-import com.mdcc.dto2ts.java.common.*;
 import cyclops.control.*;
 import cyclops.data.tuple.*;
 import cyclops.reactive.*;
 import cz.habarta.typescript.generator.*;
 import lombok.extern.slf4j.*;
-import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import javax.annotation.*;
 import java.io.*;
-import java.util.*;
 import java.util.regex.*;
 import java.util.stream.*;
 
@@ -24,25 +19,13 @@ import java.util.stream.*;
 public class Dto2TsGenerator
 {
     @Autowired
-    private Arguments arguments;
+    private TsArguments arguments;
     @Autowired
-    private ImportHandler importHandler;
-    @Autowired
-    private ClassRenamer classRenamer;
-    @Autowired
-    private Settings settings;
+    private TypeScriptGenerator generator;
     @Autowired
     private CodeWriteUtils codeWriteUtils;
-
+    @Autowired
     private Input input;
-    private TypeScriptGenerator generator;
-
-    @PostConstruct()
-    public void init()
-    {
-        input = this.buildInput();
-        generator = this.buildGenerator();
-    }
 
     public Try<String, Throwable> generate()
     {
@@ -97,20 +80,5 @@ public class Dto2TsGenerator
         pw.println();
         pw.print(code);
         return true;
-    }
-
-    @NotNull
-    private Input buildInput()
-    {
-        Input.Parameters params = new Input.Parameters();
-        params.classNamePatterns = Collections.singletonList(arguments.getPattern());
-        return Input.from(params);
-    }
-
-    @NotNull
-    private TypeScriptGenerator buildGenerator()
-    {
-
-        return new TypeScriptGenerator(settings);
     }
 }

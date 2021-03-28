@@ -10,11 +10,8 @@ import java.util.*;
 import java.util.stream.*;
 
 @Getter
-@Component
 public class Arguments
 {
-    @Value("${pattern}")
-    private String pattern;
     @Value("${suffixToRemove:Model$}")
     private String suffixToRemove;
     @Value("${prefixToRemove:^(prs|api|srv|opr).}")

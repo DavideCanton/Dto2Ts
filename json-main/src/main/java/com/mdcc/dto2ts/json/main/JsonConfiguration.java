@@ -8,13 +8,6 @@ import org.springframework.context.annotation.*;
 public class JsonConfiguration
 {
     @Bean
-    @Primary
-    public JsonArguments getJsonArguments()
-    {
-        return new JsonArguments();
-    }
-
-    @Bean
     public Emitter getEmitter(Settings settings)
     {
         return new Emitter(settings);

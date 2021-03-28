@@ -91,6 +91,7 @@ public class ModelGenerator
                             TsType.BasicType.String
                     );
                 case "number":
+                case "integer":
                     return Optional.of(TsType.BasicType.Number);
             }
         }
