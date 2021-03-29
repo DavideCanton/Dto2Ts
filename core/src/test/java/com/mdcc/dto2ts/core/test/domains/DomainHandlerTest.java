@@ -4,18 +4,18 @@ import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.domains.*;
 import com.mdcc.dto2ts.core.test.*;
 import lombok.*;
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
-import org.mockito.junit.*;
+import org.mockito.junit.jupiter.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DomainHandlerTest extends BaseUnitTestClass
 {
     @Mock
@@ -25,7 +25,7 @@ public class DomainHandlerTest extends BaseUnitTestClass
     private DomainHandler domainHandler;
 
     @SneakyThrows
-    @Before
+    @BeforeEach
     public void setup()
     {
         when(arguments.getDomainFile()).thenReturn("src/test/resources/test-domains.properties");
@@ -34,6 +34,7 @@ public class DomainHandlerTest extends BaseUnitTestClass
     }
 
     @Test
+    @BeforeEach
     public void testRegisterUsedDomains()
     {
         this.domainHandler.registerUsedDomain("Domain1");

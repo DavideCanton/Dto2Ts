@@ -5,18 +5,18 @@ import com.mdcc.dto2ts.core.domains.*;
 import com.mdcc.dto2ts.core.imports.*;
 import com.mdcc.dto2ts.core.test.*;
 import com.mdcc.dto2ts.core.transformers.*;
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
-import org.mockito.junit.*;
+import org.mockito.junit.jupiter.*;
 
 import java.util.*;
 
 import static com.mdcc.dto2ts.core.imports.ImportNames.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DomainPropertyTransformerTest extends BaseUnitTestClass
 {
     @Mock
@@ -31,10 +31,10 @@ public class DomainPropertyTransformerTest extends BaseUnitTestClass
     @InjectMocks
     private DomainPropertyTransformer transformer;
 
-    @Before
+    @BeforeEach
     public void localSetup()
     {
-        when(arguments.getDomainPrefix()).thenReturn("cod");
+        lenient().when(arguments.getDomainPrefix()).thenReturn("cod");
     }
 
     @Test

@@ -3,17 +3,17 @@ package com.mdcc.dto2ts.core.test.transformers;
 import com.mdcc.dto2ts.core.context.*;
 import com.mdcc.dto2ts.core.test.*;
 import com.mdcc.dto2ts.core.transformers.*;
-import org.junit.*;
-import org.junit.runner.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
-import org.mockito.junit.*;
+import org.mockito.junit.jupiter.*;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class FlagPropertyTransformerTest extends BaseUnitTestClass
 {
     @InjectMocks
