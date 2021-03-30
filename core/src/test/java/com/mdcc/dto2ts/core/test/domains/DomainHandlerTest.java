@@ -28,8 +28,8 @@ public class DomainHandlerTest extends BaseUnitTestClass
     @BeforeEach
     public void setup()
     {
-        when(arguments.getDomainFile()).thenReturn("src/test/resources/test-domains.properties");
-        when(arguments.getThreshold()).thenReturn(0.7);
+        lenient().when(arguments.getDomainFile()).thenReturn("src/test/resources/test-domains.properties");
+        lenient().when(arguments.getThreshold()).thenReturn(0.7);
         domainHandler.init();
     }
 
