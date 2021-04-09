@@ -1,8 +1,13 @@
 package com.mdcc.dto2ts.java.common.factories;
 
 import com.mdcc.dto2ts.core.context.*;
+import cyclops.control.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.emitter.*;
+import lombok.*;
+import org.checkerframework.checker.nullness.*;
+
+import java.util.*;
 
 public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactory
 {
@@ -21,19 +26,38 @@ public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactor
         return clazz.cast(ref.getUnderlyingValue());
     }
 
-    public static boolean isBasicType(TsType tsType)
+    public static Optional<TsType> getBasicType(TsType tsType)
     {
-        return tsType instanceof TsType.BasicType;
+        return getType(tsType, TsType.BasicType.class);
     }
 
-    public static boolean isArrayType(TsType tsType)
+    public static Optional<TsType> getArrayType(TsType tsType)
     {
-        return tsType instanceof TsType.BasicArrayType;
+        return getType(tsType, TsType.BasicArrayType.class);
     }
 
-    public static boolean isComplexType(TsType tsType)
+    public static Optional<TsType> getComplexType(TsType tsType)
     {
-        return !isBasicType(tsType) && !isArrayType(tsType);
+        return Option.fromOptional(getBasicType(tsType))
+            .toEither(null)
+            .swap()
+            .flatMap(__ ->
+                Option.fromOptional(getArrayType(tsType))
+                    .toEither(null)
+            )
+            .swap()
+            .flatMap(__ ->
+                Option.fromOptional(getType(tsType, null))
+                    .toEither(null)
+            )
+            .toOptional();
+    }
+
+    private static Optional<TsType> getType(TsType type, Class<?> targetClass)
+    {
+        return Optional.of(type)
+            .map(t -> t instanceof TsType.NullableType ? ((TsType.NullableType) t).type : t)
+            .filter(t -> targetClass == null || targetClass.isInstance(t));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.mdcc.dto2ts.core.transformers;
 
 import com.mdcc.dto2ts.core.context.*;
+import lombok.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -16,13 +18,13 @@ public class AddNullablePropertyTransformer extends ConditionPropertyTransformer
     @Override
     protected boolean canTransform(PropertyContext context)
     {
+        val factory = context.getPropertyOperationsFactory();
+        val extractor = factory.createInfoExtractor();
+
         return context
             .getDecorators()
             .stream()
-            .anyMatch(d -> nullablePropertyDecorators.contains(context.getPropertyOperationsFactory()
-                .createInfoExtractor()
-                .getDecoratorIdentifier(d))
-            );
+            .anyMatch(d -> nullablePropertyDecorators.contains(extractor.getDecoratorIdentifier(d)));
     }
 
     @Override

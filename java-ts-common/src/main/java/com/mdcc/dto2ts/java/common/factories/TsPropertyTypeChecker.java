@@ -10,19 +10,19 @@ public class TsPropertyTypeChecker implements PropertyTypeChecker
     @Override
     public boolean isArrayType(PropertyRef propertyRef)
     {
-        return TsPropertyOperationsFactory.isArrayType(getProperty(propertyRef).getTsType());
+        return TsPropertyOperationsFactory.getArrayType(getProperty(propertyRef).getTsType()).isPresent();
     }
 
     @Override
     public boolean isComplexType(PropertyRef propertyRef)
     {
-        return TsPropertyOperationsFactory.isComplexType(getProperty(propertyRef).getTsType());
+        return TsPropertyOperationsFactory.getComplexType(getProperty(propertyRef).getTsType()).isPresent();
     }
 
     @Override
     public boolean isBasicType(PropertyRef propertyRef)
     {
-        return TsPropertyOperationsFactory.isBasicType(getProperty(propertyRef).getTsType());
+        return TsPropertyOperationsFactory.getBasicType(getProperty(propertyRef).getTsType()).isPresent();
     }
 
     @Override

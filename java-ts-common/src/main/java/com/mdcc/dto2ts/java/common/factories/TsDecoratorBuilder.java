@@ -19,7 +19,7 @@ public class TsDecoratorBuilder implements DecoratorBuilder
         String[] split = element.toString().split("\\$");
 
         TsDecorator decorator;
-        if (isBasicType(element))
+        if (getBasicType(element).isPresent())
             decorator = new TsDecorator(
                 new TsIdentifierReference(JSON_ARRAY),
                 Collections.emptyList()
@@ -67,6 +67,7 @@ public class TsDecoratorBuilder implements DecoratorBuilder
     {
         return Optional.of(getProperty(propertyRef))
             .map(TsProperty::getTsType)
+            .flatMap(TsPropertyOperationsFactory::getBasicType)
             .map(TsType.BasicType.class::cast)
             .map(type -> type.name)
             .flatMap(type ->

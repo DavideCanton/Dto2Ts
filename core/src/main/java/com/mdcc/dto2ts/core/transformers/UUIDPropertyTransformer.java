@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.core.transformers;
 
 import com.mdcc.dto2ts.core.context.*;
+import lombok.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -22,6 +23,9 @@ public class UUIDPropertyTransformer extends ConditionPropertyTransformer
     @Override
     public PropertyContext doTransform(PropertyContext context)
     {
-        return context.withTransformedProperty((op, p) -> op.createPropertyRefTransformer().makeString(p));
+        return context.withTransformedProperty((op, p) -> {
+            val transformer = op.createPropertyRefTransformer();
+            return transformer.makeNullable(transformer.makeString(p));
+        });
     }
 }
