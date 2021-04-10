@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="java-ts-common" />
         <module name="core" />
+        <module name="json-main-e2e" />
         <module name="json-main" />
         <module name="java-main" />
       </profile>
@@ -24,6 +25,7 @@
       <module name="java-main" options="-parameters" />
       <module name="java-ts-common" options="-parameters" />
       <module name="json-main" options="-parameters" />
+      <module name="json-main-e2e" options="" />
     </option>
   </component>
 </project>
