@@ -79,7 +79,11 @@ public class ModelGenerator
         if (p instanceof ArrayProperty)
             return new TsType.BasicArrayType(getType(((ArrayProperty) p).getItems()));
         else if (p instanceof RefProperty)
-            return new TsType.ReferenceType(new Symbol(((RefProperty) p).getSimpleRef()));
+        {
+            String name = ((RefProperty) p).getSimpleRef();
+            String renamed = this.renamer.getName(null, name);
+            return new TsType.ReferenceType(new Symbol(renamed));
+        }
         else
         {
             switch (p.getType())
