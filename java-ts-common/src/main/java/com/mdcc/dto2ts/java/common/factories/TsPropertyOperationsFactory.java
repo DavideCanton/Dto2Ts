@@ -4,8 +4,6 @@ import com.mdcc.dto2ts.core.context.*;
 import cyclops.control.*;
 import cz.habarta.typescript.generator.*;
 import cz.habarta.typescript.generator.emitter.*;
-import lombok.*;
-import org.checkerframework.checker.nullness.*;
 
 import java.util.*;
 
@@ -39,13 +37,18 @@ public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactor
     public static Optional<TsType> getComplexType(TsType tsType)
     {
         return Option.fromOptional(getBasicType(tsType))
+            .map(v -> v)
             .toEither(null)
             .swap()
+            .map(v -> v)
+            .mapLeft(x -> x)
             .flatMap(__ ->
                 Option.fromOptional(getArrayType(tsType))
                     .toEither(null)
+                    .swap()
             )
-            .swap()
+            .map(v -> v)
+            .mapLeft(x -> x)
             .flatMap(__ ->
                 Option.fromOptional(getType(tsType, null))
                     .toEither(null)
