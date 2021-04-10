@@ -37,18 +37,13 @@ public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactor
     public static Optional<TsType> getComplexType(TsType tsType)
     {
         return Option.fromOptional(getBasicType(tsType))
-            .map(v -> v)
             .toEither(null)
             .swap()
-            .map(v -> v)
-            .mapLeft(x -> x)
             .flatMap(__ ->
                 Option.fromOptional(getArrayType(tsType))
                     .toEither(null)
                     .swap()
             )
-            .map(v -> v)
-            .mapLeft(x -> x)
             .flatMap(__ ->
                 Option.fromOptional(getType(tsType, null))
                     .toEither(null)
