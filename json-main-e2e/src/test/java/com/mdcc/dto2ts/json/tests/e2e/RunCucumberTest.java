@@ -1,4 +1,4 @@
-package com.mdcc;
+package com.mdcc.dto2ts.json.tests.e2e;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.*;
 
 @Getter
+@Setter(AccessLevel.PROTECTED)
 @Component
 public class JsonArguments extends Arguments
 {

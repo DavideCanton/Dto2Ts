@@ -4,12 +4,12 @@ import cyclops.control.*;
 import lombok.*;
 import org.jetbrains.annotations.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.*;
 
 import java.util.*;
 import java.util.stream.*;
 
 @Getter
+@Setter(AccessLevel.PROTECTED)
 public class Arguments
 {
     @Value("${suffixToRemove:Model$}")
