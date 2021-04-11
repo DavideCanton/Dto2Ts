@@ -1,111 +1,109 @@
 package com.mdcc.dto2ts.json.tests.e2e;
 
 import com.mdcc.dto2ts.json.main.*;
-import cyclops.companion.*;
-import cyclops.control.*;
-import cyclops.data.tuple.*;
-import io.cucumber.datatable.*;
 import io.cucumber.java8.*;
 import lombok.*;
+import org.apache.commons.io.*;
 import org.springframework.beans.factory.annotation.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("CodeBlock2Expr")
 public class StepDefinitions extends SpringBootTestApplication implements En
 {
-    private final Map<String, File> outFiles = new HashMap<>();
+    private File outputDefinition;
+    private List<String> fileNames;
+    private File generatedDirectory;
 
     @Autowired
     private JsonArguments jsonArguments;
     @Autowired
     private MainLogic mainLogic;
 
+
+    public StepDefinitions()
+    {
+        Before(() -> {
+            this.generatedDirectory = new File(jsonArguments.getOutputFolder());
+            FileUtils.deleteDirectory(this.generatedDirectory);
+        });
+        Given("the test case {string}", (String testCase) -> {
+            val settableJsonArguments = this.getSettableJsonArguments();
+
+            val path = getFullJsonPath(testCase);
+            settableJsonArguments.setJson(path);
+
+            this.outputDefinition = this.getOutputDefinition(testCase);
+        });
+        Given("the DTO {word}", (String name) -> {
+            val settableJsonArguments = this.getSettableJsonArguments();
+            settableJsonArguments.setRootModel(name);
+        });
+        When("^I invoke the program to translate it$", () -> {
+            mainLogic.run();
+        });
+        Then("files generated should be the ones in output folder", () -> {
+            Set<String> generatedFiles = getGeneratedFiles();
+            Set<String> expectedFiles = getOutputFiles();
+
+            assertEquals(generatedFiles, expectedFiles);
+        });
+        And("content of each file should match", () -> {
+            File[] generatedFiles = Objects.requireNonNull(this.generatedDirectory.listFiles());
+
+            for (File generated : generatedFiles)
+            {
+                String generatedContent = FileUtils.readFileToString(generated);
+
+                File expected = new File(this.outputDefinition, generated.getName());
+                String expectedContent = FileUtils.readFileToString(expected);
+
+                assertEquals(expectedContent, generatedContent);
+            }
+        });
+
+    }
+
+
     private SettableJsonArguments getSettableJsonArguments()
     {
         return (SettableJsonArguments) this.jsonArguments;
     }
 
-    private String getFullJsonPath(String name)
+    private String getFullJsonPath(String testCase)
     {
-        return String.format("src/test/resources/com/mdcc/dto2ts/json/tests/e2e/definitions/%s.json", name);
+        return String.format("src/test/resources/com/mdcc/dto2ts/json/tests/e2e/definitions/%s/input/swagger.json", testCase);
     }
 
-    private String getOutputFilePath(String name)
+    private File getOutputDefinition(String testCase)
     {
-        return String.format("target/generated-models/%s", name);
+        return new File(String.format("src/test/resources/com/mdcc/dto2ts/json/tests/e2e/definitions/%s/output", testCase));
     }
 
-    @SuppressWarnings("Convert2MethodRef")
-    public StepDefinitions()
+    private Set<String> getOutputFiles()
     {
-        Before(() -> {
-            this.outFiles.clear();
-        });
-        Given("the schema {string}", (String fileName) -> {
-            val s = this.getSettableJsonArguments();
-            val path = getFullJsonPath(fileName);
-            s.setJson(path);
-        });
-        Given("the DTO {word}", (String name) -> {
-            val s = this.getSettableJsonArguments();
-            s.setRootModel(name);
-        });
-        When("^I invoke the program to translate it$", () -> {
-            mainLogic.run();
-        });
-        Then("a file named {string} should have been created", (String name) -> {
-            String path = getOutputFilePath(name);
-            val outFile = new File(path);
-            outFiles.put(name, outFile);
-            assertTrue(outFile.exists());
-        });
-        And("imports in {string} should be:", (String name, DataTable t) -> {
-            File outFile = this.outFiles.get(name);
-            assertNotNull(outFile);
-
-            val m = t.asMaps();
-
-            List<String> lines = readLines(outFile);
-
-            Streams.zipStream(
-                lines.stream(),
-                m.stream(),
-                Tuple2::of
-            ).forEach(tuple -> {
-                String line = tuple._1();
-                val map = tuple._2();
-
-                val importedSymbols = map.get("importedSymbols");
-                val from = map.get("from");
-
-                assertEquals("import { " + importedSymbols + " } from '" + from + "';", line);
-            });
-        });
+        return getFilesFromDirectory(this.outputDefinition);
     }
 
-    private List<String> readLines(File file)
+    private Set<String> getGeneratedFiles()
     {
-        return Try.withResources(
-            () -> new BufferedReader(new FileReader(file)),
-            reader -> {
-                List<String> lines = new ArrayList<>();
-
-                while (true)
-                {
-                    String line = reader.readLine();
-                    if (line == null) break;
-                    lines.add(line);
-                }
-
-                return lines;
-            },
-            IOException.class
-        ).fold(
-            l -> l,
-            __ -> null
-        );
+        return getFilesFromDirectory(this.generatedDirectory);
     }
+
+    private Set<String> getFilesFromDirectory(File directory)
+    {
+        if (!directory.isDirectory()) throw new IllegalArgumentException("directory");
+
+        File[] array = directory.listFiles();
+        assert array != null;
+
+        return Arrays.stream(array)
+            .map(File::getName)
+            .collect(Collectors.toSet());
+    }
+
 }
