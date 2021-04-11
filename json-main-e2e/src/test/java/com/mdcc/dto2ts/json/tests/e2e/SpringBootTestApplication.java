@@ -5,6 +5,7 @@ import io.cucumber.spring.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.context.annotation.*;
+import org.springframework.test.annotation.*;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = Main.class)
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.*;
 @ComponentScan(
     basePackages = "com.mdcc.dto2ts"
 )
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class SpringBootTestApplication
 {
 }

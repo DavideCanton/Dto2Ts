@@ -45,7 +45,12 @@ public class DomainHandler
                     .keySet()
                     .stream()
                     .map(Object::toString)
-                    .map(s -> s.replaceAll(String.format("^%s", arguments.getDomainFilePrefix()), ""))
+                    .map(s -> {
+                        String domainFilePrefix = arguments.getDomainFilePrefix();
+                        if (!domainFilePrefix.endsWith("."))
+                            domainFilePrefix += ".";
+                        return s.replaceAll(String.format("^%s", domainFilePrefix), "");
+                    })
                     .collect(Collectors.toList());
             },
             IOException.class

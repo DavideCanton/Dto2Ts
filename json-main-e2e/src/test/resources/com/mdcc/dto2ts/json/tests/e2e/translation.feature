@@ -1,6 +1,6 @@
 Feature: Translation of DTO
 
-  Scenario Outline: Translation of single DTO with simple fields
+  Scenario Outline: Translation of DTO
     Given the test case "<testCase>"
     And the DTO <dtoName>
 
@@ -10,5 +10,6 @@ Feature: Translation of DTO
     And content of each file should match
 
     Examples:
-      | testCase | dtoName    |
-      | test01   | ExampleDto |
+      | testCase    | dtoName    |
+      | test_simple | ExampleDto |
+      | test_domain | ExampleDto |

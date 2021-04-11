@@ -1,4 +1,4 @@
-import { JsonClass, JsonProperty, SerializeFn } from 'at-json';
+import { JsonArray, JsonClass, JsonProperty, SerializeFn } from 'at-json';
 import { JsonDateISO } from 'creapp-common-lib';
 
 @JsonClass()
@@ -9,6 +9,8 @@ export class ExampleDto {
     dateOfBirth: Date | null;
     @JsonProperty()
     uid: string | null;
+    @JsonArray()
+    names: string[] = [];
     serialize: SerializeFn;
 }
 

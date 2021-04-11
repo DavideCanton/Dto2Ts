@@ -26,16 +26,14 @@
     "ExampleDto": {
       "type": "object",
       "properties": {
-        "name": {
+        "codaddresstype": {
           "type": "string"
         },
-        "dateOfBirth": {
-          "type": "string",
-          "format": "date-time"
+        "codresidencetype": {
+          "type": "string"
         },
-        "uid": {
-          "type": "string",
-          "format": "uuid"
+        "codstreettype": {
+          "type": "string"
         }
       },
       "title": "ExampleDto"
