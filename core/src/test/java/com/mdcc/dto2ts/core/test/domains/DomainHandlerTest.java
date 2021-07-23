@@ -29,6 +29,7 @@ public class DomainHandlerTest extends BaseUnitTestClass
     public void setup()
     {
         lenient().when(arguments.getDomainFile()).thenReturn("src/test/resources/test-domains.properties");
+        lenient().when(arguments.getDomainFilePrefix()).thenReturn("a.");
         lenient().when(arguments.getThreshold()).thenReturn(0.7);
         domainHandler.init();
     }
