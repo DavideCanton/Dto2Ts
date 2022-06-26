@@ -1,11 +1,20 @@
 package com.mdcc.dto2ts.java.common.factories;
 
-import com.mdcc.dto2ts.core.context.*;
-import cyclops.control.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
+import com.mdcc.dto2ts.core.context.CachingPropertyOperationsFactory;
+import com.mdcc.dto2ts.core.context.DecoratorBuilder;
+import com.mdcc.dto2ts.core.context.DecoratorRef;
+import com.mdcc.dto2ts.core.context.GenericRef;
+import com.mdcc.dto2ts.core.context.InfoExtractor;
+import com.mdcc.dto2ts.core.context.PropertyConstructor;
+import com.mdcc.dto2ts.core.context.PropertyRef;
+import com.mdcc.dto2ts.core.context.PropertyRefTransformer;
+import com.mdcc.dto2ts.core.context.PropertyTypeChecker;
+import cyclops.control.Option;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.emitter.TsDecorator;
+import cz.habarta.typescript.generator.emitter.TsPropertyModel;
 
-import java.util.*;
+import java.util.Optional;
 
 public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactory
 {

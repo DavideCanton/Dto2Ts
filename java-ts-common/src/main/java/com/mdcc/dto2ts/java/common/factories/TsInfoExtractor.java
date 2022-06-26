@@ -1,9 +1,11 @@
 package com.mdcc.dto2ts.java.common.factories;
 
-import com.mdcc.dto2ts.core.context.*;
-import cz.habarta.typescript.generator.*;
+import com.mdcc.dto2ts.core.context.DecoratorRef;
+import com.mdcc.dto2ts.core.context.InfoExtractor;
+import com.mdcc.dto2ts.core.context.PropertyRef;
+import cz.habarta.typescript.generator.TsType;
 
-import java.util.*;
+import java.util.Optional;
 
 public class TsInfoExtractor implements InfoExtractor
 {

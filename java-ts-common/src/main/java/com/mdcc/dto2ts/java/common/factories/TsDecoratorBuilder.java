@@ -1,14 +1,28 @@
 package com.mdcc.dto2ts.java.common.factories;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.utils.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
+import com.mdcc.dto2ts.core.context.DecoratorBuilder;
+import com.mdcc.dto2ts.core.context.DecoratorRef;
+import com.mdcc.dto2ts.core.context.PropertyRef;
+import com.mdcc.dto2ts.core.utils.Utils;
+import cz.habarta.typescript.generator.TsProperty;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.emitter.TsDecorator;
+import cz.habarta.typescript.generator.emitter.TsIdentifierReference;
+import cz.habarta.typescript.generator.emitter.TsMemberExpression;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
 
-import static com.mdcc.dto2ts.core.imports.ImportNames.*;
-import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.*;
+import static com.mdcc.dto2ts.core.imports.ImportNames.DOMAINS;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_ARRAY;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_ARRAY_OF_COMPLEX_PROPERTY;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_COMPLEX_PROPERTY;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_DATE_ISO;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_FLAG;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_LOCALIZABLE_PROPERTY;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_PROPERTY;
+import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.getBasicType;
+import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.getProperty;
 
 public class TsDecoratorBuilder implements DecoratorBuilder
 {

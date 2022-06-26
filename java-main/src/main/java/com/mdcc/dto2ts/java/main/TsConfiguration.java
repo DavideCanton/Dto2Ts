@@ -1,9 +1,12 @@
 package com.mdcc.dto2ts.java.main;
 
-import cz.habarta.typescript.generator.*;
-import org.springframework.context.annotation.*;
+import cz.habarta.typescript.generator.Input;
+import cz.habarta.typescript.generator.Settings;
+import cz.habarta.typescript.generator.TypeScriptGenerator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.Collections;
 
 @Configuration
 public class TsConfiguration

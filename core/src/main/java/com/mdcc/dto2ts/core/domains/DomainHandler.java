@@ -1,19 +1,29 @@
 package com.mdcc.dto2ts.core.domains;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.oath.cyclops.util.*;
-import cyclops.control.*;
-import cyclops.data.tuple.*;
-import info.debatty.java.stringsimilarity.*;
-import info.debatty.java.stringsimilarity.interfaces.*;
-import lombok.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Try;
+import cyclops.data.tuple.Tuple2;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
+import info.debatty.java.stringsimilarity.interfaces.StringSimilarity;
+import lombok.Getter;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.*;
-import java.io.*;
-import java.util.*;
-import java.util.stream.*;
+import javax.annotation.PostConstruct;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Component
 public class DomainHandler

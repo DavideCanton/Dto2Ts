@@ -1,19 +1,24 @@
 package com.mdcc.dto2ts.java.main;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.domains.*;
-import cyclops.control.*;
-import lombok.extern.slf4j.*;
-import lombok.*;
-import org.codehaus.plexus.util.*;
-import org.jetbrains.annotations.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.context.annotation.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.core.domains.DomainHandler;
+import cyclops.control.Try;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.codehaus.plexus.util.ExceptionUtils;
+import org.codehaus.plexus.util.FileUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
 
 @SpringBootApplication
 @Slf4j
@@ -41,14 +46,14 @@ public class Main implements CommandLineRunner
             .fold(__ -> __, __ -> "<<INVALID FILE>>");
 
         return Try.withResources(
-            () -> new PrintWriter(new FileWriter(file)),
-            w ->
-            {
-                domainHandler.getDomainsUsed().forEach(w::println);
-                return true;
-            },
-            Throwable.class
-        )
+                () -> new PrintWriter(new FileWriter(file)),
+                w ->
+                {
+                    domainHandler.getDomainsUsed().forEach(w::println);
+                    return true;
+                },
+                Throwable.class
+            )
             .peek(__ -> log.info("Written domain file at {}", path))
             .onFail(__ -> log.error("Error in writing domain file at {}", path));
     }
@@ -77,10 +82,10 @@ public class Main implements CommandLineRunner
                 if (dir.isDirectory())
                     return Try.runWithCatch(() -> FileUtils.cleanDirectory(dir));
                 else if (!dir.exists())
-                {
-                    //noinspection ResultOfMethodCallIgnored
-                    return Try.runWithCatch(dir::mkdirs);
-                }
+                    return Try.runWithCatch(() -> {
+                        if (!dir.mkdirs())
+                            throw new IOException("Directory creation failure.");
+                    });
                 else
                     return Try.failure(new Exception("There is already a file named as the output directory"));
             });

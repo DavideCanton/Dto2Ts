@@ -1,6 +1,8 @@
 package com.mdcc.dto2ts.java.common.factories;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

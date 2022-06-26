@@ -1,13 +1,15 @@
 package com.mdcc.dto2ts.core.context;
 
-import com.mdcc.dto2ts.core.decorators.*;
-import com.mdcc.dto2ts.core.transformers.*;
-import cyclops.data.tuple.*;
-import cyclops.reactive.*;
-import org.springframework.beans.factory.annotation.*;
+import com.mdcc.dto2ts.core.decorators.PropertyDecorator;
+import com.mdcc.dto2ts.core.transformers.PropertyTransformer;
+import com.mdcc.dto2ts.core.transformers.TransformAfterDecorate;
+import com.mdcc.dto2ts.core.transformers.TransformBeforeDecorate;
+import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class DefaultPropertyTransformationExecutor<P, C> implements PropertyTransformationExecutor<P, C>
 {

@@ -1,16 +1,20 @@
 package com.mdcc.dto2ts.json.tests.e2e;
 
-import com.mdcc.dto2ts.json.main.*;
-import io.cucumber.java8.*;
-import lombok.*;
-import org.apache.commons.io.*;
-import org.springframework.beans.factory.annotation.*;
+import com.mdcc.dto2ts.json.main.JsonArguments;
+import com.mdcc.dto2ts.json.main.MainLogic;
+import io.cucumber.java8.En;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("CodeBlock2Expr")
 public class StepDefinitions extends SpringBootTestApplication implements En

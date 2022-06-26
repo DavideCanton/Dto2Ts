@@ -1,16 +1,20 @@
 package com.mdcc.dto2ts.json.main;
 
-import com.mdcc.dto2ts.core.domains.*;
-import cyclops.control.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
-import org.codehaus.plexus.util.*;
-import org.jetbrains.annotations.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.domains.DomainHandler;
+import cyclops.control.Try;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.codehaus.plexus.util.ExceptionUtils;
+import org.codehaus.plexus.util.FileUtils;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collections;
 
 @Component
 @Slf4j

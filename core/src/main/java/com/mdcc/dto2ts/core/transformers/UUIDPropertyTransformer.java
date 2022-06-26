@@ -1,9 +1,10 @@
 package com.mdcc.dto2ts.core.transformers;
 
-import com.mdcc.dto2ts.core.context.*;
-import lombok.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 @TransformBeforeDecorate

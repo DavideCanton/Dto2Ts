@@ -1,18 +1,23 @@
 package com.mdcc.dto2ts.java.main;
 
-import com.mdcc.dto2ts.core.imports.*;
-import com.mdcc.dto2ts.core.utils.*;
-import cyclops.control.*;
-import cyclops.data.tuple.*;
-import cyclops.reactive.*;
-import cz.habarta.typescript.generator.*;
-import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.imports.ImportNames;
+import com.mdcc.dto2ts.core.utils.CodeWriteUtils;
+import com.mdcc.dto2ts.core.utils.Utils;
+import cyclops.control.Try;
+import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import cz.habarta.typescript.generator.Input;
+import cz.habarta.typescript.generator.TypeScriptGenerator;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.regex.*;
-import java.util.stream.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j

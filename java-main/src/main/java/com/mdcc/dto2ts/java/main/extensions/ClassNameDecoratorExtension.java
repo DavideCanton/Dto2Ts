@@ -1,16 +1,20 @@
 package com.mdcc.dto2ts.java.main.extensions;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.java.common.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
-import cz.habarta.typescript.generator.emitter.*;
-import org.jetbrains.annotations.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.java.common.CodeDecorationUtils;
+import com.mdcc.dto2ts.java.common.TsExtension;
+import cz.habarta.typescript.generator.Extension;
+import cz.habarta.typescript.generator.compiler.ModelCompiler;
+import cz.habarta.typescript.generator.emitter.EmitterExtensionFeatures;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import cz.habarta.typescript.generator.emitter.TsModel;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @TsExtension

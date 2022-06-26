@@ -14,12 +14,10 @@
         <module name="java-main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="dto2ts" target="8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Dto2Ts" options="-parameters" />
       <module name="core" options="-parameters" />
       <module name="dto2ts" options="" />
       <module name="java-main" options="-parameters" />

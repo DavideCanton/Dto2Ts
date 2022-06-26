@@ -1,17 +1,21 @@
 package com.mdcc.dto2ts.core.test.transformers;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.test.*;
-import com.mdcc.dto2ts.core.transformers.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.*;
-import org.mockito.*;
-import org.mockito.junit.jupiter.*;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import com.mdcc.dto2ts.core.context.PropertyRef;
+import com.mdcc.dto2ts.core.test.BaseUnitTestClass;
+import com.mdcc.dto2ts.core.transformers.FlagPropertyTransformer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class FlagPropertyTransformerTest extends BaseUnitTestClass

@@ -1,10 +1,19 @@
 package com.mdcc.dto2ts.java.common;
 
-import cz.habarta.typescript.generator.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.*;
+import cz.habarta.typescript.generator.ClassMapping;
+import cz.habarta.typescript.generator.EnumMapping;
+import cz.habarta.typescript.generator.Extension;
+import cz.habarta.typescript.generator.JsonLibrary;
+import cz.habarta.typescript.generator.NullabilityDefinition;
+import cz.habarta.typescript.generator.Settings;
+import cz.habarta.typescript.generator.TypeScriptFileType;
+import cz.habarta.typescript.generator.TypeScriptOutputKind;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class SettingsConfiguration

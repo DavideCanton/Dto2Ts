@@ -1,6 +1,6 @@
 package com.mdcc.dto2ts.json.tests.e2e;
 
-import com.mdcc.dto2ts.json.main.*;
+import com.mdcc.dto2ts.json.main.JsonArguments;
 
 public class SettableJsonArguments extends JsonArguments
 {

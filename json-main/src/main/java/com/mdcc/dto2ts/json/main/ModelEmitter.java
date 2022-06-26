@@ -1,15 +1,19 @@
 package com.mdcc.dto2ts.json.main;
 
-import com.google.common.base.*;
-import com.mdcc.dto2ts.core.utils.*;
-import cyclops.control.*;
-import cz.habarta.typescript.generator.emitter.*;
-import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.google.common.base.CaseFormat;
+import com.mdcc.dto2ts.core.utils.CodeWriteUtils;
+import cyclops.control.Try;
+import cz.habarta.typescript.generator.emitter.Emitter;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import cz.habarta.typescript.generator.emitter.TsModel;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collections;
 
 @Component
 @Slf4j

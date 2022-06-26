@@ -1,12 +1,12 @@
 package com.mdcc.dto2ts.json.main;
 
-import cyclops.control.*;
-import cyclops.reactive.*;
-import io.swagger.models.*;
-import io.swagger.parser.*;
-import lombok.extern.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import cyclops.control.Try;
+import cyclops.reactive.ReactiveSeq;
+import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j

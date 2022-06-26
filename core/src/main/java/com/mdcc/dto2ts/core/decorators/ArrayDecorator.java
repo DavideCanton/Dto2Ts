@@ -1,9 +1,9 @@
 package com.mdcc.dto2ts.core.decorators;
 
-import com.mdcc.dto2ts.core.context.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Optional;
 
 @Component
 public class ArrayDecorator implements PropertyDecorator

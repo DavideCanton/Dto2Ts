@@ -1,7 +1,7 @@
 package com.mdcc.dto2ts.core.transformers;
 
-import com.mdcc.dto2ts.core.context.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import org.springframework.stereotype.Component;
 
 @Component
 @TransformBeforeDecorate

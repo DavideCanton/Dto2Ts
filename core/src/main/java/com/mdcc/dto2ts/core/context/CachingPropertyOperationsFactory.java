@@ -1,46 +1,61 @@
 package com.mdcc.dto2ts.core.context;
 
-import java.util.*;
-import java.util.function.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.var;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+@Getter
+@Setter(AccessLevel.PRIVATE)
 public abstract class CachingPropertyOperationsFactory extends PropertyOperationsFactory
 {
-    private final Map<Supplier<?>, Object> cache = new HashMap<>();
+    private DecoratorBuilder decoratorBuilder;
+    private InfoExtractor infoExtractor;
+    private PropertyConstructor propertyConstructor;
+    private PropertyRefTransformer propertyRefTransformer;
+    private PropertyTypeChecker propertyTypeChecker;
 
     @Override
     public DecoratorBuilder createDecoratorBuilder()
     {
-        return cache(this::innerCreateDecoratorBuilder);
+        return cache(this::innerCreateDecoratorBuilder, this::getDecoratorBuilder, this::setDecoratorBuilder);
     }
 
     @Override
     public InfoExtractor createInfoExtractor()
     {
-        return cache(this::innerCreateInfoExtractor);
+        return cache(this::innerCreateInfoExtractor, this::getInfoExtractor, this::setInfoExtractor);
     }
 
     @Override
     public PropertyConstructor createPropertyConstructor()
     {
-        return cache(this::innerCreatePropertyConstructor);
+        return cache(this::innerCreatePropertyConstructor, this::getPropertyConstructor, this::setPropertyConstructor);
     }
 
     @Override
     public PropertyRefTransformer createPropertyRefTransformer()
     {
-        return cache(this::innerCreatePropertyRefTransformer);
+        return cache(this::innerCreatePropertyRefTransformer, this::getPropertyRefTransformer, this::setPropertyRefTransformer);
     }
 
     @Override
     public PropertyTypeChecker createPropertyTypeChecker()
     {
-        return cache(this::innerCreatePropertyTypeChecker);
+        return cache(this::innerCreatePropertyTypeChecker, this::getPropertyTypeChecker, this::setPropertyTypeChecker);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T cache(Supplier<T> fn)
+    private <T> T cache(Supplier<T> fn, Supplier<T> getter, Consumer<T> setter)
     {
-        return (T) cache.computeIfAbsent(fn, Supplier::get);
+        var value = getter.get();
+        if (value != null)
+            return value;
+        value = fn.get();
+        setter.accept(value);
+        return value;
     }
 
     protected abstract PropertyTypeChecker innerCreatePropertyTypeChecker();

@@ -1,11 +1,13 @@
 package com.mdcc.dto2ts.java.common.factories;
 
-import com.mdcc.dto2ts.core.context.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
+import com.mdcc.dto2ts.core.context.PropertyRef;
+import com.mdcc.dto2ts.core.context.PropertyRefTransformer;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.emitter.TsModifierFlags;
+import cz.habarta.typescript.generator.emitter.TsPropertyModel;
 
-import static com.mdcc.dto2ts.core.imports.ImportNames.*;
-import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.*;
+import static com.mdcc.dto2ts.core.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
+import static com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory.getProperty;
 
 public class TsPropertyRefTransformer implements PropertyRefTransformer
 {

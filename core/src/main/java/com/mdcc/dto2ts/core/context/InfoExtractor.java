@@ -1,6 +1,6 @@
 package com.mdcc.dto2ts.core.context;
 
-import java.util.*;
+import java.util.Optional;
 
 public interface InfoExtractor
 {

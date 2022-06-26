@@ -1,10 +1,13 @@
 package com.mdcc.dto2ts.core.test.visitor;
 
-import com.mdcc.dto2ts.core.visitor.*;
-import org.junit.jupiter.api.*;
+import com.mdcc.dto2ts.core.visitor.VisitorContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 
 public class VisitorContextTest
 {

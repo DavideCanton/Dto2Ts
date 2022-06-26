@@ -1,17 +1,20 @@
 package com.mdcc.dto2ts.java.common.factories.tests;
 
-import com.mdcc.dto2ts.java.common.factories.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
-import lombok.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.*;
-import org.junit.jupiter.params.provider.*;
+import com.mdcc.dto2ts.java.common.factories.TsPropertyOperationsFactory;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.compiler.Symbol;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TsPropertyOperationsFactoryTests
 {

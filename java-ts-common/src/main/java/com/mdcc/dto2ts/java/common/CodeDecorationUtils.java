@@ -1,23 +1,39 @@
 package com.mdcc.dto2ts.java.common;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.imports.*;
-import com.mdcc.dto2ts.core.utils.*;
-import com.mdcc.dto2ts.core.visitor.*;
-import com.mdcc.dto2ts.java.common.factories.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
-import cz.habarta.typescript.generator.emitter.*;
-import lombok.*;
-import org.jetbrains.annotations.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.springframework.util.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.core.context.PropertyTransformationExecutor;
+import com.mdcc.dto2ts.core.imports.ImportHandler;
+import com.mdcc.dto2ts.core.utils.Utils;
+import com.mdcc.dto2ts.core.visitor.VisitorContext;
+import com.mdcc.dto2ts.java.common.factories.TransformationExecutorContext;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.compiler.Symbol;
+import cz.habarta.typescript.generator.emitter.TsBeanCategory;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import cz.habarta.typescript.generator.emitter.TsCallExpression;
+import cz.habarta.typescript.generator.emitter.TsDecorator;
+import cz.habarta.typescript.generator.emitter.TsExpressionStatement;
+import cz.habarta.typescript.generator.emitter.TsIdentifierReference;
+import cz.habarta.typescript.generator.emitter.TsMemberExpression;
+import cz.habarta.typescript.generator.emitter.TsMethodModel;
+import cz.habarta.typescript.generator.emitter.TsModifierFlags;
+import cz.habarta.typescript.generator.emitter.TsParameterModel;
+import cz.habarta.typescript.generator.emitter.TsPropertyModel;
+import cz.habarta.typescript.generator.emitter.TsThisExpression;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.mdcc.dto2ts.core.imports.ImportNames.*;
+import static com.mdcc.dto2ts.core.imports.ImportNames.JSON_CLASS;
+import static com.mdcc.dto2ts.core.imports.ImportNames.SERIALIZE_FN;
 
 @Component
 public class CodeDecorationUtils

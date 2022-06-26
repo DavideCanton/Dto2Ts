@@ -1,11 +1,11 @@
 package com.mdcc.dto2ts.json.tests.e2e;
 
-import com.mdcc.dto2ts.json.main.*;
-import io.cucumber.spring.*;
-import org.springframework.boot.autoconfigure.*;
-import org.springframework.boot.test.context.*;
-import org.springframework.context.annotation.*;
-import org.springframework.test.annotation.*;
+import com.mdcc.dto2ts.json.main.Main;
+import io.cucumber.spring.CucumberContextConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.annotation.DirtiesContext;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = Main.class)

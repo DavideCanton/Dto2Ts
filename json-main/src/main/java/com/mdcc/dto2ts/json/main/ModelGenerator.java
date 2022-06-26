@@ -1,17 +1,26 @@
 package com.mdcc.dto2ts.json.main;
 
-import com.mdcc.dto2ts.java.common.*;
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.compiler.*;
-import cz.habarta.typescript.generator.emitter.*;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
-import lombok.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.java.common.ClassRenamer;
+import com.mdcc.dto2ts.java.common.CodeDecorationUtils;
+import cz.habarta.typescript.generator.Settings;
+import cz.habarta.typescript.generator.TsType;
+import cz.habarta.typescript.generator.compiler.Symbol;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import cz.habarta.typescript.generator.emitter.TsModifierFlags;
+import cz.habarta.typescript.generator.emitter.TsPropertyModel;
+import io.swagger.models.Model;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ModelGenerator

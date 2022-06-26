@@ -1,16 +1,17 @@
 package com.mdcc.dto2ts.java.common;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.utils.*;
-import cyclops.reactive.*;
-import cz.habarta.typescript.generator.compiler.*;
-import cz.habarta.typescript.generator.emitter.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.core.utils.Utils;
+import cyclops.reactive.ReactiveSeq;
+import cz.habarta.typescript.generator.compiler.SymbolTable;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.*;
-import java.util.*;
-import java.util.regex.*;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @Component
 public class ClassRenamer implements SymbolTable.CustomTypeNamingFunction

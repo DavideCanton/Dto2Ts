@@ -1,9 +1,10 @@
 package com.mdcc.dto2ts.core.decorators;
 
-import com.mdcc.dto2ts.core.context.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import lombok.val;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Optional;
 
 @Component
 public class ComplexDecorator implements PropertyDecorator
@@ -11,8 +12,9 @@ public class ComplexDecorator implements PropertyDecorator
     @Override
     public Optional<PropertyContext> decorateProperty(PropertyContext context)
     {
+        val factory = context.getPropertyOperationsFactory();
         return Optional.of(context)
-            .filter(p -> p.getPropertyOperationsFactory().createPropertyTypeChecker().isComplexType(p.getPropertyRef()))
-            .map(p -> context.addDecorator(p.getPropertyOperationsFactory().createDecoratorBuilder().buildComplexDecorator(p.getPropertyRef())));
+            .filter(c -> factory.createPropertyTypeChecker().isComplexType(c.getPropertyRef()))
+            .map(c -> c.addDecorator(factory.createDecoratorBuilder().buildComplexDecorator(c.getPropertyRef())));
     }
 }

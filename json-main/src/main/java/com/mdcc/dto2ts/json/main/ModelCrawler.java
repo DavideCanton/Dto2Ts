@@ -1,15 +1,21 @@
 package com.mdcc.dto2ts.json.main;
 
-import com.mdcc.dto2ts.java.common.*;
-import cz.habarta.typescript.generator.emitter.*;
-import io.swagger.models.*;
-import io.swagger.models.properties.*;
-import lombok.extern.slf4j.*;
-import lombok.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.java.common.CodeDecorationUtils;
+import cz.habarta.typescript.generator.emitter.TsBeanModel;
+import io.swagger.models.Model;
+import io.swagger.models.Swagger;
+import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -29,15 +35,16 @@ public class ModelCrawler
         Map<String, TsBeanModel> generatedBeans = new HashMap<>();
         Set<String> modelsToVisit = new HashSet<>();
 
-        if (arguments.getRootModel() == null || "".equals(arguments.getRootModel()))
+        String rootModel = arguments.getRootModel();
+        if (rootModel == null || "".equals(rootModel))
         {
             log.info("RootModel argument empty, defaulting to all models");
             modelsToVisit.addAll(definitions.keySet());
         }
         else
         {
-            log.info("RootModel argument set to " + arguments.getRootModel());
-            modelsToVisit.add(arguments.getRootModel());
+            log.info("RootModel argument set to " + rootModel);
+            modelsToVisit.add(rootModel);
         }
 
         visitAndCreateModels(modelsToVisit, generatedBeans, definitions);

@@ -1,9 +1,16 @@
 package com.mdcc.dto2ts.core.test;
 
-import com.mdcc.dto2ts.core.context.*;
-import org.mockito.*;
+import com.mdcc.dto2ts.core.context.DecoratorBuilder;
+import com.mdcc.dto2ts.core.context.InfoExtractor;
+import com.mdcc.dto2ts.core.context.PropertyConstructor;
+import com.mdcc.dto2ts.core.context.PropertyOperationsFactory;
+import com.mdcc.dto2ts.core.context.PropertyRefTransformer;
+import com.mdcc.dto2ts.core.context.PropertyTypeChecker;
 import org.junit.jupiter.api.BeforeEach;
-import static org.mockito.Mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.lenient;
 
 public abstract class BaseUnitTestClass
 {

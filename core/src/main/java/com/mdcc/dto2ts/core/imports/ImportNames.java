@@ -1,6 +1,8 @@
 package com.mdcc.dto2ts.core.imports;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ImportNames
 {

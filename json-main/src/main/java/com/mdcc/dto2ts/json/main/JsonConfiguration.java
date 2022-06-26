@@ -1,8 +1,9 @@
 package com.mdcc.dto2ts.json.main;
 
-import cz.habarta.typescript.generator.*;
-import cz.habarta.typescript.generator.emitter.*;
-import org.springframework.context.annotation.*;
+import cz.habarta.typescript.generator.Settings;
+import cz.habarta.typescript.generator.emitter.Emitter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JsonConfiguration

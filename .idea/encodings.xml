@@ -5,6 +5,9 @@
     <file url="file://$PROJECT_DIR$/core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/java-main/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/java-ts-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/json-main-e2e/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/json-main/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>
 </project>

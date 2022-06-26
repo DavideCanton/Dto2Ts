@@ -1,12 +1,15 @@
 package com.mdcc.dto2ts.core.transformers;
 
-import com.mdcc.dto2ts.core.context.*;
-import com.mdcc.dto2ts.core.domains.*;
-import com.mdcc.dto2ts.core.imports.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import com.mdcc.dto2ts.core.context.Arguments;
+import com.mdcc.dto2ts.core.context.InfoExtractor;
+import com.mdcc.dto2ts.core.context.PropertyContext;
+import com.mdcc.dto2ts.core.context.PropertyTypeChecker;
+import com.mdcc.dto2ts.core.domains.DomainHandler;
+import com.mdcc.dto2ts.core.imports.ImportHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Optional;
 
 import static com.mdcc.dto2ts.core.context.ContextConstants.DOMAIN_KEY;
 import static com.mdcc.dto2ts.core.imports.ImportNames.I_LOCALIZABLE_PROPERTY;
