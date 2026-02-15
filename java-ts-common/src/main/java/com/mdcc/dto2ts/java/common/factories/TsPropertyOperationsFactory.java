@@ -63,7 +63,7 @@ public class TsPropertyOperationsFactory extends CachingPropertyOperationsFactor
     private static Optional<TsType> getType(TsType type, Class<?> targetClass)
     {
         return Optional.of(type)
-            .map(t -> t instanceof TsType.NullableType ? ((TsType.NullableType) t).type : t)
+            .map(t -> t instanceof TsType.NullableType nt ? nt.type : t)
             .filter(t -> targetClass == null || targetClass.isInstance(t));
     }
 

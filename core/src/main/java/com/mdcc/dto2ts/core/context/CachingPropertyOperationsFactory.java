@@ -3,7 +3,6 @@ package com.mdcc.dto2ts.core.context;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

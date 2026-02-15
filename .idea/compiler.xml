@@ -2,7 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -17,9 +16,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Dto2Ts" options="-parameters" />
       <module name="core" options="-parameters" />
-      <module name="dto2ts" options="" />
+      <module name="dto2ts" options="-parameters" />
       <module name="java-main" options="-parameters" />
       <module name="java-ts-common" options="-parameters" />
       <module name="json-main" options="-parameters" />

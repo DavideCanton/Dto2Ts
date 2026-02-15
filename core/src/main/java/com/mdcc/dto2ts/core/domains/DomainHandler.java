@@ -1,8 +1,6 @@
 package com.mdcc.dto2ts.core.domains;
 
 import com.mdcc.dto2ts.core.context.Arguments;
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.control.Try;
 import cyclops.data.tuple.Tuple2;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import info.debatty.java.stringsimilarity.interfaces.StringSimilarity;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,30 +38,20 @@ public class DomainHandler
     {
         try (FileReader fr = new FileReader(this.arguments.getDomainFile()))
         {
-            this.loadPropertiesFrom(fr).onFail(ExceptionSoftener::throwSoftenedException);
+            val p = new Properties();
+            p.load(fr);
+            domains = p
+                .keySet()
+                .stream()
+                .map(Object::toString)
+                .map(s -> {
+                    String domainFilePrefix = arguments.getDomainFilePrefix();
+                    if (!domainFilePrefix.endsWith("."))
+                        domainFilePrefix += ".";
+                    return s.replaceAll(String.format("^%s", domainFilePrefix), "");
+                })
+                .collect(Collectors.toList());
         }
-    }
-
-    public Try<Void, IOException> loadPropertiesFrom(Reader reader)
-    {
-        return Try.runWithCatch(
-            () -> {
-                val p = new Properties();
-                p.load(reader);
-                domains = p
-                    .keySet()
-                    .stream()
-                    .map(Object::toString)
-                    .map(s -> {
-                        String domainFilePrefix = arguments.getDomainFilePrefix();
-                        if (!domainFilePrefix.endsWith("."))
-                            domainFilePrefix += ".";
-                        return s.replaceAll(String.format("^%s", domainFilePrefix), "");
-                    })
-                    .collect(Collectors.toList());
-            },
-            IOException.class
-        );
     }
 
     public Optional<String> findDomain(String propertyName)
