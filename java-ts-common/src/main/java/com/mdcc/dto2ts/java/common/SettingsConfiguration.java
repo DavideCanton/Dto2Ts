@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class SettingsConfiguration
 
     @Autowired(required = false)
     @TsExtension
-    private Optional<List<Extension>> extensionList;
+    private List<Extension> extensionList;
 
     @Bean
     public Settings getSettings()
@@ -39,7 +40,8 @@ public class SettingsConfiguration
         settings.noTslintDisable = true;
         settings.nullabilityDefinition = NullabilityDefinition.nullInlineUnion;
         settings.customTypeNamingFunctionImpl = classRenamer;
-        this.extensionList.ifPresent(settings.extensions::addAll);
+
+        Optional.ofNullable(this.extensionList).ifPresent(settings.extensions::addAll);
         return settings;
     }
 }

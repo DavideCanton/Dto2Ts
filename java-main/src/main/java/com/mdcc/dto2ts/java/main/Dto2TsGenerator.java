@@ -8,6 +8,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cz.habarta.typescript.generator.Input;
 import cz.habarta.typescript.generator.TypeScriptGenerator;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,7 +60,7 @@ public class Dto2TsGenerator
             .filter(n -> n > 0, __ -> new IllegalStateException("Code not found"));
     }
 
-    private Try<Boolean, Throwable> createTypeScriptFile(String code, String type, String className)
+    private Try<Void, Throwable> createTypeScriptFile(String code, String type, String className)
     {
         File file = new File(this.arguments.getOutputFolder(), "class".equals(type)
             ? Utils.getClassName(className) + ".ts"
@@ -70,20 +71,23 @@ public class Dto2TsGenerator
             .orElse("<<INVALID FILE>>");
 
         return Try.withResources(
-            () -> new PrintWriter(new FileWriter(file)),
-            pw -> writeFile(code, className, pw),
-            Throwable.class
-        )
+                () -> new PrintWriter(new FileWriter(file)),
+                pw ->
+                {
+                    writeFile(code, className, pw);
+                    return (Void)null;
+                },
+                Throwable.class
+            )
             .peek(__ -> log.info("Written {}", path))
             .onFail(__ -> log.error("Error in writing {}", path));
     }
 
-    private boolean writeFile(String code, String className, PrintWriter pw)
+    private void writeFile(String code, String className, PrintWriter pw)
     {
         String imports = codeWriteUtils.generateClassImport(className);
         pw.print(imports);
         pw.println();
         pw.print(code);
-        return true;
     }
 }

@@ -113,9 +113,8 @@ public class ModelGenerator
     {
         val nullabilityDefinition = settings.nullabilityDefinition;
 
-        if (tsType instanceof TsType.NullableType)
+        if (tsType instanceof TsType.NullableType nullableType)
         {
-            final TsType.NullableType nullableType = (TsType.NullableType) tsType;
             if (nullabilityDefinition.isInline())
                 return new TsType.UnionType(nullableType.type).add(nullabilityDefinition.getTypes());
         }

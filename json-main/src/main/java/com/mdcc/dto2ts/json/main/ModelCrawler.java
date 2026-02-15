@@ -36,14 +36,14 @@ public class ModelCrawler
         Set<String> modelsToVisit = new HashSet<>();
 
         String rootModel = arguments.getRootModel();
-        if (rootModel == null || "".equals(rootModel))
+        if (rootModel == null || rootModel.isEmpty())
         {
             log.info("RootModel argument empty, defaulting to all models");
             modelsToVisit.addAll(definitions.keySet());
         }
         else
         {
-            log.info("RootModel argument set to " + rootModel);
+            log.info("RootModel argument set to {}", rootModel);
             modelsToVisit.add(rootModel);
         }
 
@@ -76,12 +76,12 @@ public class ModelCrawler
             // skip already generated
             if (generatedBeans.containsKey(modelToVisit)) continue;
 
-            log.debug("Visiting model " + modelToVisit);
+            log.debug("Visiting model {}", modelToVisit);
 
             Model model = definitions.get(modelToVisit);
             if (model == null) continue;
 
-            log.debug("Found definition for " + modelToVisit);
+            log.debug("Found definition for {}", modelToVisit);
 
             generatedBeans.put(modelToVisit, generator.createBean(model));
 
@@ -92,7 +92,7 @@ public class ModelCrawler
                 // avoid self-loops and translate only model types
                 if (!propertyType.equals(modelToVisit) && definitions.containsKey(propertyType))
                 {
-                    log.debug("Found property of type " + propertyType + ", adding to visit models");
+                    log.debug("Found property of type {}, adding to visit models", propertyType);
                     modelsToVisit.add(propertyType);
                 }
             }

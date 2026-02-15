@@ -39,7 +39,7 @@ public class ModelEmitter
                 TsModel model = new TsModel()
                     .withBeans(Collections.singletonList(bean));
 
-                log.info("Writing file " + fileName);
+                log.info("Writing file {}", fileName);
 
                 StringWriter sw = new StringWriter();
 
