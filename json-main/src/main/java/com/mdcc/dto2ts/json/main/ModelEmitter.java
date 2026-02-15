@@ -35,7 +35,8 @@ public class ModelEmitter
 
         return Try.withResources(
             () -> new PrintWriter(new FileWriter(arguments.getOutputFolder() + "/" + fileName)),
-            writer -> {
+            writer ->
+            {
                 TsModel model = new TsModel()
                     .withBeans(Collections.singletonList(bean));
 
@@ -50,9 +51,7 @@ public class ModelEmitter
                     model,
                     sw,
                     null,
-                    true,
-                    true,
-                    0
+                    true
                 );
 
                 writer.println(codeWriteUtils.setDefaultForArrays(sw.toString()));

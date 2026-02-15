@@ -1,6 +1,7 @@
 package com.mdcc.dto2ts.json.main;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,7 +16,7 @@ public class MainRunner implements CommandLineRunner
     private MainLogic mainLogic;
 
     @Override
-    public void run(String... args)
+    public void run(String @NonNull ... args)
     {
         this.mainLogic.run();
     }

@@ -4,12 +4,12 @@ import com.mdcc.dto2ts.core.context.Arguments;
 import cyclops.data.tuple.Tuple2;
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import info.debatty.java.stringsimilarity.interfaces.StringSimilarity;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;

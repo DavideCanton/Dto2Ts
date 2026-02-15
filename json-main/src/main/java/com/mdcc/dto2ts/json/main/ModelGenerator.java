@@ -77,6 +77,7 @@ public class ModelGenerator
             new LinkedList<>(),
             TsModifierFlags.None,
             true,
+            null,
             type.equals(TsType.Any) ?
                 Collections.singletonList("untraslated type: " + property.getType()) :
                 null

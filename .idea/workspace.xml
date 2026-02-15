@@ -4,15 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63c1b5f7-2f02-4109-8897-5ca01d51bc33" name="Changes" comment="improvement">
+    <list default="true" id="63c1b5f7-2f02-4109-8897-5ca01d51bc33" name="Changes" comment="migration">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/context/Arguments.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/context/Arguments.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Dto2TsGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Dto2TsGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/domains/DomainHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/domains/DomainHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-ts-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/ClassRenamer.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/ClassRenamer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/SettingsConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/SettingsConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json-main-e2e/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/json-main-e2e/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelCrawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelCrawler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/json-main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelEmitter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +41,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -47,6 +54,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Maven.dto2ts [clean].executor": "Run",
+    "Maven.dto2ts [install].executor": "Run",
+    "Maven.dto2ts [test].executor": "Run",
+    "Maven.dto2ts [validate].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -54,6 +65,9 @@
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "E:/sources/Dto2Ts",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
@@ -105,11 +119,20 @@
       <option name="project" value="LOCAL" />
       <updated>1771169187962</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="migration">
+      <option name="closed" value="true" />
+      <created>1771170236124</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1771170236124</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="improvement" />
-    <option name="LAST_COMMIT_MESSAGE" value="improvement" />
+    <MESSAGE value="migration" />
+    <option name="LAST_COMMIT_MESSAGE" value="migration" />
   </component>
 </project>

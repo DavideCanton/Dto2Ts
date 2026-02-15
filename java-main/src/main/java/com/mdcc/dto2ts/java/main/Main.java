@@ -8,6 +8,7 @@ import lombok.val;
 import org.codehaus.plexus.util.ExceptionUtils;
 import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -59,7 +60,7 @@ public class Main implements CommandLineRunner
     }
 
     @Override
-    public void run(String... args)
+    public void run(String @NonNull ... args)
     {
         arguments.isValid()
             .flatMap(__ ->
