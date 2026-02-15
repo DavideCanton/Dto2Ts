@@ -5,6 +5,7 @@ import com.mdcc.dto2ts.java.common.CodeDecorationUtils;
 import com.mdcc.dto2ts.java.common.TsExtension;
 import cz.habarta.typescript.generator.Extension;
 import cz.habarta.typescript.generator.compiler.ModelCompiler;
+import cz.habarta.typescript.generator.compiler.TsModelTransformer;
 import cz.habarta.typescript.generator.emitter.EmitterExtensionFeatures;
 import cz.habarta.typescript.generator.emitter.TsBeanModel;
 import cz.habarta.typescript.generator.emitter.TsModel;
@@ -34,13 +35,12 @@ public class ClassNameDecoratorExtension extends Extension
     }
 
     @Override
-    public List<TransformerDefinition> getTransformers()
+    public List<Extension.TransformerDefinition> getTransformers()
     {
-        List<TransformerDefinition> transformerDefinitions = new ArrayList<>();
+        List<Extension.TransformerDefinition> transformerDefinitions = new ArrayList<>();
 
-        transformerDefinitions.add(new TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums, (symbolTable, model) ->
-            model.withBeans(getBeans(model)))
-        );
+        transformerDefinitions.add(new Extension.TransformerDefinition(ModelCompiler.TransformationPhase.BeforeEnums,
+            (TsModelTransformer) (context, model) -> model.withBeans(getBeans(model))));
         return transformerDefinitions;
     }
 

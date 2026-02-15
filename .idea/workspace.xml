@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="63c1b5f7-2f02-4109-8897-5ca01d51bc33" name="Changes" comment="migration">
+    <list default="true" id="63c1b5f7-2f02-4109-8897-5ca01d51bc33" name="Changes" comment="updated dependencies">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/domains/DomainHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/main/java/com/mdcc/dto2ts/core/domains/DomainHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-ts-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/ClassRenamer.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/ClassRenamer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/SettingsConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-ts-common/src/main/java/com/mdcc/dto2ts/java/common/SettingsConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json-main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelEmitter.java" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelEmitter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/json-main/src/main/java/com/mdcc/dto2ts/json/main/ModelGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/extensions/ClassNameDecoratorExtension.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-main/src/main/java/com/mdcc/dto2ts/java/main/extensions/ClassNameDecoratorExtension.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +50,7 @@
     "Maven.dto2ts [validate].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
@@ -127,12 +118,21 @@
       <option name="project" value="LOCAL" />
       <updated>1771170236124</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="updated dependencies">
+      <option name="closed" value="true" />
+      <created>1771171568511</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1771171568511</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="improvement" />
     <MESSAGE value="migration" />
-    <option name="LAST_COMMIT_MESSAGE" value="migration" />
+    <MESSAGE value="updated dependencies" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated dependencies" />
   </component>
 </project>
